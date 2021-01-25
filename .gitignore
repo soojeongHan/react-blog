@@ -1,0 +1,17 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+blog-frontend/node_modules
+blog-frontend/config
+blog-backend/node_modules
+
+# production
+blog-frontend/build
+
+# misc
+*.env
+.vscode
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

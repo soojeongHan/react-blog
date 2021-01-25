@@ -1,0 +1,30 @@
+@import url("http://fonts.googleapis.com/earlyaccess/notosanskr.css");
+@import url("http://cdn.jsdelivr.net/gh/velopert/font-d2coding@1.2.1/d2coding.css");
+
+// @font-face {
+//   font-family: 'D2 Coding';
+//   font-style: normal;
+//   font-weight: 700;
+//   font-display: swap;
+//   src:
+//     local('../font/d2coding-full.ttf') format('truetype'),
+//     local('../font/d2coding-full.woff2') format('woff2'),
+//     local('../font/d2coding-full.woff') format('woff');
+// }
+
+body {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: inherit;
+}
+
+a {
+  text-decoration: inherit;
+  color: inherit;
+}

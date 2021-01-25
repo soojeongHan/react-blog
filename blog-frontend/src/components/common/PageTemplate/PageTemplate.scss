@@ -1,0 +1,9 @@
+@import '../../../styles/lib/utils';
+
+.page-template {
+  main {
+    background: #ffffff;
+    min-height: calc(100vh - 15rem);
+    margin-top: 5rem;
+  }
+}
