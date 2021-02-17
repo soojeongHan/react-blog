@@ -1,9 +1,16 @@
 import React from 'react';
 import EditorContainer from 'src/containers/EditorContainer';
 
-const EditorPage: React.FC = () => {
+type EditorPageType = {
+  location: any,
+  match: any,
+}
+
+const EditorPage: React.FC<EditorPageType> = ({ location, match }) => {
+  const postId = location.search.split("id=").pop();
+  const isNewPost = postId === "";
   return (
-    <EditorContainer />  
+    <EditorContainer postId={postId} isNewPost={isNewPost} />
   );
 }
 

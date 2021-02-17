@@ -1,18 +1,14 @@
 import React from 'react';
-import PageTemplate from 'src/components/common/PageTemplate';
-import ListWrapper from 'src/components/list/ListWrapper';
-import Pagenation from 'src/components/list/Pagenation';
-import PostList from 'src/components/list/PostList';
+import ListContainer from 'src/containers/ListContainer';
 
+type ListPageType = {
+  match: any;
+}
 
-const ListPage: React.FC = () => {
+const ListPage: React.FC<ListPageType> = ({ match }) => {
+  const { page = 1, tag }: any = match.params;
   return (
-    <PageTemplate>
-      <ListWrapper>
-        <PostList />
-        <Pagenation />
-      </ListWrapper>
-    </PageTemplate>
+    <ListContainer page={page} tag={tag} />
   );
 }
 

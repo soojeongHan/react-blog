@@ -7,13 +7,13 @@ const cx = classNames.bind(styles);
 
 interface ButtonProps {
   children: React.ReactNode,
-  to?: string,
+  to?: any,
   onClick?: () => void,
   disabled?: boolean,
   theme?: string
 }
 
-const Div: React.FC = ({children, ...rest}) => <div {...rest}>{children}</div>
+const Div: React.FC = ({ children, ...rest }) => <div {...rest}>{children}</div>
 
 const Button: React.FC<ButtonProps> = ({
   children, to, onClick, disabled, theme = 'default',
@@ -24,8 +24,10 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <Element
       to={to}
-      className={cx('button', theme, {disabled})}
-      onClick={disabled ? () => null : onClick}
+      className={cx('button', theme, { disabled })}
+      onClick={disabled
+        ? () => null
+        : onClick}
     >
       {children}
     </Element>
