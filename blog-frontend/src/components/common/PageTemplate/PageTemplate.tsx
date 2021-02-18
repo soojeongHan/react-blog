@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './PageTemplate.scss';
 import classNames from 'classnames';
-import Footer from 'src/components/common/Footer';
 import HeaderContainer from 'src/containers/HeaderContainer';
+import FooterContainer from 'src/containers/FooterContainer';
 
 const cx = classNames.bind(styles);
 
@@ -17,7 +17,7 @@ const PageTemplate: React.FC<PageTempateProps> = ({ children }) => {
       <main>
         {children}
       </main>
-      <Footer />
+      <FooterContainer />
     </div>
   );
 }

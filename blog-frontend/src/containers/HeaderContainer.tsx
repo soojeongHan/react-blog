@@ -1,8 +1,9 @@
 import React from 'react';
 import Header from 'src/components/common/Header';
 import { useDispatch } from 'react-redux';
-import { getList as getListSaga, deletePost as deletePostSaga } from 'src/redux/modules/blog';
+import { getList as getListSaga } from 'src/redux/modules/blog';
 import { history } from 'src/redux/create';
+import { showModal } from 'src/redux/modules/base';
 
 type HeaderContainerProps = {
 
@@ -16,7 +17,7 @@ const HeaderContainer: React.FC<HeaderContainerProps> = () => {
     dispatch(getListSaga(1));
   }
   const handleRemove = () => {
-    dispatch(deletePostSaga(postId));
+    dispatch(showModal('remove'));
   }
   return (
     <Header goHomepage={goHomepage} handleRemove={handleRemove} isEditing={isEditing} postId={postId} />

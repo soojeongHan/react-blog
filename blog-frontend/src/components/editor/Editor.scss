@@ -2,7 +2,7 @@
 
 .editor-template {
   .editor-header {
-    background: $oc-blue-6;
+    background: $oc-gray-9;
     height: 4rem;
     padding-left: 1rem;
     padding-right: 1rem;
@@ -14,14 +14,28 @@
     }
   }
 
+  
+
   .panes {
     height: calc(100vh - 4rem);
     display: flex;
     position: relative;
-    min-width: 0;
-    overflow: auto;
-    flex-direction: column;
+
+    .editor {
+      flex-direction: column;
+    }
+
+    .preview {
+      padding: 10px;
+      border: none;
+    }
     
+    .pane {
+      display: flex;
+      min-width: 0;
+      overflow: auto;
+    }
+
     .title-input {
       background: $oc-gray-7;
       border: none;
@@ -125,6 +139,14 @@
           color: rgba(255, 255, 255, .75);
         }
       }
+    }
+
+    .seperator {
+      width: 1rem;
+      height: 100%;
+      position: absolute;
+      transform: translate(-50%);
+      cursor: col-resize;
     }
   } 
 }

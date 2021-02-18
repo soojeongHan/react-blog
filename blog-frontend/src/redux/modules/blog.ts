@@ -95,7 +95,6 @@ interface GetListActionType extends AnyAction {
 
 function* getListSaga(action: GetListActionType) {
   try {
-    console.log("getListSaga");
     yield put(pending());
     const response = yield call(BlogService.getList, action.payload.page, action.payload.tag);
     const posts: PostResType[] = Array.from(response.data).map(v => {
@@ -158,21 +157,6 @@ function* addPostSaga(action: AddPostActionType) {
   try {
     yield put(pending());
     yield call(BlogService.writePost, action.payload.post);
-    // const post:any = yield call(BlogService.getPost, action.payload.postId);
-    const response = yield call(BlogService.getList, 1);
-    const posts: PostResType[] = Array.from(response.data).map(v => {
-      const value = Object(v);
-      const post = {
-        postId: value._id,
-        title: value.title,
-        body: value.body,
-        tags: value.tags,
-        publishedDate: value.publishedDate,
-      }
-      return post;
-    })
-
-    yield put(successList(posts));
     yield put(push("/"));
   }
   catch (error) {
@@ -190,21 +174,6 @@ function* deletePostSaga(action: DeletePostActionType) {
   try {
     yield put(pending());
     yield call(BlogService.deletePost, action.payload.postId);
-    // const post:any = yield call(BlogService.getPost, action.payload.postId);
-    const response = yield call(BlogService.getList, 1);
-    const posts: PostResType[] = Array.from(response.data).map(v => {
-      const value = Object(v);
-      const post = {
-        postId: value._id,
-        title: value.title,
-        body: value.body,
-        tags: value.tags,
-        publishedDate: value.publishedDate,
-      }
-      return post;
-    })
-
-    yield put(successList(posts));
     yield put(push("/"));
   }
   catch (error) {
@@ -221,25 +190,8 @@ interface UpdatePostActionType extends AnyAction {
 
 function* updatePostSaga(action: UpdatePostActionType) {
   try {
-    console.log("updatePostSaga");
     yield put(pending());
-    console.log(action.payload.postId, action.payload.post);
     yield call(BlogService.updatePost, action.payload.postId, action.payload.post);
-    // const post:any = yield call(BlogService.getPost, action.payload.postId);
-    const response = yield call(BlogService.getList, 1);
-    const posts: PostResType[] = Array.from(response.data).map(v => {
-      const value = Object(v);
-      const post = {
-        postId: value._id,
-        title: value.title,
-        body: value.body,
-        tags: value.tags,
-        publishedDate: value.publishedDate,
-      }
-      return post;
-    })
-
-    yield put(successList(posts));
     yield put(push(`/post/${action.payload.postId}`));
   }
   catch (error) {

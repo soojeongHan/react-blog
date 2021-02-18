@@ -10,14 +10,18 @@ const cx = classNames.bind(styles);
 
 type EditorProps = {
   post?: PostResType | null;
-  onChange: (e: string | undefined) => void;
   body: string | undefined,
+  leftPercentage: number;
+
   addPost: (post: PostReqType) => void;
   updatePost: (post: PostReqType) => void;
+  onChange: (e: string | undefined) => void;
+  handleMouseMove: (e: any) => void;
+  handleIsDown: (down: boolean) => void;
 }
 
 const Editor: React.FC<EditorProps> = ({
-  post, onChange, body, addPost, updatePost
+  post, onChange, body, addPost, updatePost, leftPercentage, handleMouseMove, handleIsDown
 }) => {
   const onSubmit = () => {
     const title = titleRef.current?.value;
@@ -46,9 +50,8 @@ const Editor: React.FC<EditorProps> = ({
   }
   const titleRef = React.useRef<HTMLInputElement>(null);
   const tagsRef = React.useRef<HTMLInputElement>(null);
-
   return (
-    <div className={cx('editor-template')}>
+    <div className={cx('editor-template')} onMouseMove={(e) => handleMouseMove(e)}>
 
       <div className={cx('editor-header')}>
         <div className={cx('back')}>
@@ -60,14 +63,26 @@ const Editor: React.FC<EditorProps> = ({
       </div>
 
       <div className={cx('panes')}>
-        <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={post?.title} />
-        <div className={cx('code-editor')}>
-          <MDEditor className={cx('w-md-editor')} value={body} onChange={onChange} />
+        <div className={cx('pane', 'editor')} style={{ flex: leftPercentage }}>
+          <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={post?.title} />
+          <div className={cx('code-editor')}>
+            <MDEditor className={cx('w-md-editor')} value={body} onChange={onChange} preview={'edit'} />
+          </div>
+          <div className={cx('tags')}>
+            <div className={cx('description')}>태그</div>
+            <input name="tags" placeholder="태그를 입력하세요 (쉼표로 구분)" ref={tagsRef} defaultValue={post?.tags} />
+          </div>
         </div>
-        <div className={cx('tags')}>
-          <div className={cx('description')}>태그</div>
-          <input name="tags" placeholder="태그를 입력하세요 (쉼표로 구분)" ref={tagsRef} defaultValue={post?.tags} />
+        <div className={cx('pane')} style={{ flex: 1 - leftPercentage }}>
+          <div className={cx('code-editor')}>
+            <MDEditor.Markdown source={body || ''} className={cx('w-md-editor', 'preview')} />
+          </div>
         </div>
+        <div
+          className={cx('seperator')}
+          style={{ left: `${leftPercentage * 100}%` }}
+          onMouseDown={() => handleIsDown(true)}
+          onMouseUp={() => handleIsDown(false)} />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import PostPage from 'src/pages/PostPage';
 import NotFoundPage from 'src/pages/NotFoundPage';
 import { history } from 'src/redux/create';
 import { ConnectedRouter } from 'connected-react-router';
+import Base from 'src/components/common/Base';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route exact path="/" component={ListPage} />
         <Route component={NotFoundPage} />
       </Switch>
+      <Base />
     </ConnectedRouter>
   );
 }

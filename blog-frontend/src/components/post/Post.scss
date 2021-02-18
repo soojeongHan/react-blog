@@ -1,7 +1,7 @@
 @import '../../styles/lib/utils';
 
 .post-info {
-  background: $oc-blue-6;
+  background: $oc-gray-5;
   height: 24rem;
   display: flex;
   align-items: center;
@@ -11,7 +11,7 @@
     margin-top: -5rem;
     width: 1024px;
     padding: 1rem;
-    color: #ffffff;
+    color: black;
 
     h1 {
       font-weight: 300;
@@ -21,10 +21,11 @@
     }
 
     .tags {
+      color: $oc-blue-7;
       margin-top: 1rem;
       font-size: 1.25rem;
       font-weight: 500;
-
+      
       a {
         &:hover {
           text-decoration: underline;

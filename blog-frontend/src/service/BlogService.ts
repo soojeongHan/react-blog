@@ -1,37 +1,36 @@
 import axios from 'axios';
 import { PostReqType } from 'src/types';
 
-const BLOG_API_URL = "http://localhost:4000";
+const POST_API_URL = "http://localhost:4000/api/posts";
 
 export default class BlogService {
   public static async writePost(post: PostReqType) {
-    const response = await axios.post(`${BLOG_API_URL}/api/posts`, post);
+    const response = await axios.post(`${POST_API_URL}`, post);
     return response.data;
   }
 
   public static async getPost(id: number) {
-    const response = await axios.get(`${BLOG_API_URL}/api/posts/${id}`);
+    const response = await axios.get(`${POST_API_URL}/${id}`);
     return response.data;
   }
 
   public static async getList(page: number, tag?: string) {
-    const response = await axios.get(tag ? `${BLOG_API_URL}/api/posts/?tag=${tag}` : `${BLOG_API_URL}/api/posts/?page=${page}`);
+    const response = await axios.get(tag ? `${POST_API_URL}/?tag=${tag}` : `${POST_API_URL}/?page=${page}`);
     return response;
   }
 
   public static async getPostList() {
-    const response = await axios.get(`${BLOG_API_URL}/api/posts/`);
+    const response = await axios.get(`${POST_API_URL}/`);
     return response;
   }
 
   public static async deletePost(id: number) {
-    const response = await axios.delete(`${BLOG_API_URL}/api/posts/${id}`);
+    const response = await axios.delete(`${POST_API_URL}/${id}`);
     return response.data;
   }
 
   public static async updatePost(id: number, post: PostReqType) {
-    console.log(id);
-    const response = await axios.patch(`${BLOG_API_URL}/api/posts/${id}`, post);
+    const response = await axios.patch(`${POST_API_URL}/${id}`, post);
     return response.data;
   }
 }

@@ -2,15 +2,16 @@ import React from 'react';
 import styles from './Post.scss';
 import classNames from 'classnames/bind';
 import { PostResType } from 'src/types';
-import ReactMarkDown from 'react-markdown';
+import MDEditor from '@uiw/react-md-editor';
 
 const cx = classNames.bind(styles);
 
 type postProps = {
   post: PostResType | null,
+  date: string,
 }
 
-const post: React.FC<postProps> = ({ post }) => {
+const post: React.FC<postProps> = ({ post, date }) => {
   if (!post) return <div></div>;
   return (
     <div>
@@ -21,14 +22,14 @@ const post: React.FC<postProps> = ({ post }) => {
             {post.tags.map((tag, i) => <a href={`/tag/${tag}`} key={i}>#{tag}</a>)}
           </div>
           <div className={cx('date')}>
-            {post.publishedDate}
+            {date}
           </div>
         </div>
       </div>
 
       <div className={cx('post-body')}>
         <div className={cx('paper')}>
-          <ReactMarkDown source={post.body} />
+          <MDEditor.Markdown source={post.body} />
         </div>
       </div>
     </div>
