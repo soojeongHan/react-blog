@@ -3,5 +3,8 @@ import { sagas as BlogSagas } from './blog';
 import { sagas as AuthSagas } from './base';
 
 export default function* rootSaga() {
-  yield all([BlogSagas(), AuthSagas()]);
+  yield all([
+    BlogSagas(),
+    AuthSagas()
+  ]);
 }

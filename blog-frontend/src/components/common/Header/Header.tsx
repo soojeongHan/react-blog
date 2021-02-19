@@ -10,9 +10,10 @@ type HeaderType = {
   postId?: string;
   goHomepage: () => void;
   handleRemove: () => void;
+  logged: boolean;
 }
 
-const Header: React.FC<HeaderType> = ({ isEditing, postId, goHomepage, handleRemove }) => {
+const Header: React.FC<HeaderType> = ({ isEditing, postId, goHomepage, handleRemove, logged }) => {
   return (
     <header className={cx('header')}>
       <div className={cx('header-content')}>
@@ -20,13 +21,13 @@ const Header: React.FC<HeaderType> = ({ isEditing, postId, goHomepage, handleRem
           <div onClick={goHomepage}>Soo Dev-Blog</div>
         </div>
         <div className={cx('right')}>
-          {isEditing &&
+          {isEditing && logged &&
             <Button theme="outline" to={`/editor?id=${postId}`}>수정</Button>
           }
-          {isEditing &&
+          {isEditing && logged &&
             <Button theme="outline" onClick={handleRemove}>삭제</Button>
           }
-          <Button theme="outline" to="/editor">새 포스트</Button>
+          {logged && <Button theme="outline" to="/editor">새 포스트</Button>}
         </div>
       </div>
     </header>

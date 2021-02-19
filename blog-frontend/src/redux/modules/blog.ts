@@ -131,7 +131,7 @@ interface GetPostActionType extends AnyAction {
 function* getPostSaga(action: GetPostActionType) {
   try {
     yield put(pending());
-    const data: any = yield call(BlogService.getPost, action.payload.postId);
+    const data = yield call(BlogService.getPost, action.payload.postId);
     const post: PostResType = {
       postId: data._id,
       title: data.title,

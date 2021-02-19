@@ -1,39 +1,7 @@
 const Post = require("models/post");
 const Joi = require("joi");
 const {ObjectId} = require('mongoose').Types;
-
-const colours = {
-  reset: "\x1b[0m",
-  bright: "\x1b[1m",
-  dim: "\x1b[2m",
-  underscore: "\x1b[4m",
-  blink: "\x1b[5m",
-  reverse: "\x1b[7m",
-  hidden: "\x1b[8m",
-  
-  fg: {
-      black: "\x1b[30m",
-      red: "\x1b[31m",
-      green: "\x1b[32m",
-      yellow: "\x1b[33m",
-      blue: "\x1b[34m",
-      magenta: "\x1b[35m",
-      cyan: "\x1b[36m",
-      white: "\x1b[37m",
-      crimson: "\x1b[38m" // Scarlet
-  },
-  bg: {
-      black: "\x1b[40m",
-      red: "\x1b[41m",
-      green: "\x1b[42m",
-      yellow: "\x1b[43m",
-      blue: "\x1b[44m",
-      magenta: "\x1b[45m",
-      cyan: "\x1b[46m",
-      white: "\x1b[47m",
-      crimson: "\x1b[48m"
-  }
-};
+const colours = require('../style');
 
 exports.isValidObjectId = (ctx,next) => {
   const {id} = ctx.params;
@@ -74,6 +42,8 @@ exports.write = async(ctx) => {
 }
 
 exports.list = async(ctx) => {
+  console.log(ctx.session.logged);
+
   const page = parseInt(ctx.query.page || 1, 10);
   const { tag } = ctx.query;
 
@@ -90,7 +60,7 @@ exports.list = async(ctx) => {
 
   try {
     const posts = await Post.find(query)
-      .sort({_id: -1})
+      .sort({publishedDate: -1})
       .limit(10)
       .skip((page-1) * 10)
       .lean()
@@ -114,6 +84,7 @@ exports.list = async(ctx) => {
 }
 
 exports.read = async(ctx) => {
+  console.log(ctx.session.logged);
   const {id} = ctx.params;
   try {
     const post = await Post.findById(id).exec();

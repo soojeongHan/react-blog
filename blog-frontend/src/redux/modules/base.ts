@@ -32,16 +32,17 @@ const options = {
   prefix: 'blog/base'
 }
 
-export const { showModal, hideModal, loginSuccess, loginError, logout, checkLogin, changePasswordInput, initializeLoginModal } = createActions(
+export const { showModal, hideModal, loginSuccess, loginError, logout, checkLogin, changePasswordInput, initializeLoginModal, tempLogin } = createActions(
   {
     SHOW_MODAL: (modalName) => ({ modalName }),
     HIDE_MODAL: (modalName) => ({ modalName }),
     LOGIN_SUCCESS: () => ({}),
     LOGIN_ERROR: () => ({}),
     LOGOUT: () => ({}),
-    CHECK_LOGIN: () => ({}),
+    CHECK_LOGIN: (logged: boolean) => ({ logged }),
     CHANGE_PASSWORD_INPUT: (password: string) => ({ password }),
     INITIALIZE_LOGIN_MODAL: () => ({}),
+    TEMP_LOGIN: () => ({}),
   },
   options,
 );
@@ -64,6 +65,10 @@ const reducer = handleActions<BaseType, any>(
     }),
     LOGIN_SUCCESS: (state) => ({
       ...state,
+      modal: {
+        ...state.modal,
+        login: false,
+      },
       loginModal: {
         password: '',
         error: false,
@@ -96,6 +101,10 @@ const reducer = handleActions<BaseType, any>(
     INITIALIZE_LOGIN_MODAL: (state) => ({
       ...state,
       loginModal: initialState.loginModal
+    }),
+    TEMP_LOGIN: (state) => ({
+      ...state,
+      logged: true,
     })
   },
   initialState,
@@ -127,13 +136,12 @@ interface LoginActionType extends AnyAction {
 
 function* reqLoginSaga(action: LoginActionType) {
   try {
-    console.log("login");
     const response = yield call(AuthService.login, action.payload.password);
-    response ? yield put(loginSuccess()) : yield put(loginError());
-    yield put(push('/'));
+    yield response.data.success ? put(loginSuccess()) : put(loginError());
   }
   catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+    console.error(error);
+    yield put(push('/'));
   }
 }
 
@@ -150,9 +158,8 @@ function* reqLogoutSaga() {
 
 function* reqCheckLoginSaga() {
   try {
-    const response = yield call(AuthService.logout);
-    yield put(checkLogin(response));
-    yield put(push('/'));
+    const { logged } = yield call(AuthService.checkLogin);
+    yield put(checkLogin(logged));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

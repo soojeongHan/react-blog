@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import LoginModal from 'src/components/modal/LoginModal/LoginModal';
 import { RootState } from 'src/redux/modules/rootReducer';
 import * as BaseAction from 'src/redux/modules/base'
+import { push } from 'connected-react-router';
 
 type LoginModalContainerProps = {
 
@@ -17,8 +18,8 @@ const LoginModalContainer: React.FC<LoginModalContainerProps> = () => {
   const handleLogin = async () => {
     try {
       await dispatch(BaseAction.reqLogin(password));
-      console.log('login', password);
-      handleCancel();
+      await push('/');
+      localStorage.logged = "true";
     }
     catch (e) {
       console.error(e);

@@ -2,10 +2,11 @@ require('dotenv').config();
 // Library
 const Koa = require("koa");
 const Router = require("koa-router");
-const bodyParser = require('koa-bodyparser');
-const mongoose = require("mongoose");
-const cors = require("@koa/cors");
 const session = require('koa-session');
+const bodyParser = require('koa-bodyparser');
+const cors = require("@koa/cors");
+
+const mongoose = require("mongoose");
 
 const api = require("./api");
 
@@ -33,20 +34,20 @@ const sessionConfig = {
   maxAge: 86400000, // 1 day
 }
 
-app.keys = [signKey];
 app
-  .use(bodyParser())
-  .use(session(sessionConfig, app))
-  .use(cors({
+.use(bodyParser())
+.use(session(sessionConfig, app))
+.use(cors({
     origin: "http://localhost:3000",
     exposeHeaders: 'lastpage',
+    credentials: true,
   }))
   .use(router.routes()).use(router.allowedMethods());
-
+  app.keys = [signKey]; 
+  
 router.use('/api', api.routes());
 
 app.listen(port, () => {
   console.log("Server Start");
   console.log(`http://localhost:${port}/`)
 })
-
