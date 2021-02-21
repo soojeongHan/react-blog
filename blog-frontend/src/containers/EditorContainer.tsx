@@ -24,7 +24,7 @@ const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) 
   const [leftPercentage, setLeftPercentage] = React.useState<number>(0.5);
   const [isDown, setIsDown] = React.useState<boolean>(false);
 
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const lp = e.clientX / window.innerWidth;
     if (isDown && lp < 0.75 && lp > 0.25) {
       setLeftPercentage(lp);
@@ -44,7 +44,7 @@ const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) 
   }
 
   return (
-    <Editor onChange={onChange} body={body} addPost={isNewPost ? addPost : updatePost} updatePost={updatePost} post={isNewPost ? null : post} leftPercentage={leftPercentage} handleMouseMove={handleMouseMove} handleIsDown={handleIsDown} />
+    <Editor onChange={onChange} body={body} addPost={isNewPost ? addPost : updatePost} post={isNewPost ? null : post} leftPercentage={leftPercentage} handleMouseMove={handleMouseMove} handleIsDown={handleIsDown} />
   );
 }
 

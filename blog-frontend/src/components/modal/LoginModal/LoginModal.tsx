@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styles from './LoginModal.scss';
 import classNames from 'classnames/bind';
 import ModalWrapper from '../ModalWrapper/ModalWrapper';
@@ -11,8 +11,8 @@ type LoginModalProps = {
   password: string,
   error: boolean,
   onCancel: () => void,
-  onChange: (e: any) => void,
-  onKeyPress: (e: any) => void,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void,
   onLogin: () => void,
 }
 

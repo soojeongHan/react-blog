@@ -12,16 +12,15 @@ type PagenationProps = {
 }
 
 const Pagenation: React.FC<PagenationProps> = ({ lastPage, createPagePath, page }) => {
-  const pageNum = Number(page);
   return (
     <div className={cx('pagenation')}>
-      <Button disabled={pageNum - 1 > 0 ? false : true} to={createPagePath(pageNum - 1)}>
+      <Button disabled={page - 1 > 0 ? false : true} to={createPagePath(page - 1)}>
         이전 페이지
       </Button>
       <div className={cx('number')}>
         페이지 {page}
       </div>
-      <Button disabled={pageNum + 1 > lastPage ? true : false} to={createPagePath(pageNum + 1)}>
+      <Button disabled={page + 1 > lastPage ? true : false} to={createPagePath(page + 1)}>
         다음 페이지
       </Button>
     </div>

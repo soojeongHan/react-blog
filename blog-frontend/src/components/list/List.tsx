@@ -31,12 +31,11 @@ const PostItem: React.FC<PostItemProps> = React.memo(({
 
 type ListProps = {
   posts: PostResType[] | null;
-  lastPage: number | null;
   urlPush: (url: string) => void;
 }
 
 const List: React.FC<ListProps> = ({
-  posts, lastPage, urlPush,
+  posts, urlPush,
 }) => {
   if (!posts) return <div></div>;
 

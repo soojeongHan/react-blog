@@ -19,7 +19,7 @@ const PostContainer: React.FC<PostContainerProps> = ({ postId }) => {
   }, [dispatch, postId]);
 
   const post = useSelector<RootState, PostResType | null>(state => state.blog.post);
-  const loading = useSelector<RootState, boolean>(state => state.blog.loading) || false;
+  const loading = useSelector<RootState, boolean>(state => state.blog.loading);
   const publishedDate: Date = post ? new Date(post.publishedDate) : new Date();
   const date: string = `${publishedDate.getFullYear()}. ${publishedDate.getMonth() + 1}. ${publishedDate.getDate()}.`;
 

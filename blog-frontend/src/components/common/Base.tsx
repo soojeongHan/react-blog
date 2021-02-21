@@ -10,7 +10,7 @@ type BaseProps = {
 const Base: React.FC<BaseProps> = () => {
   const dispatch = useDispatch();
 
-  const initialize = async () => {
+  const initialize = () => {
     // 로그인 상태 확인
     if (localStorage.logged === "true") {
       dispatch(tempLogin());
@@ -20,7 +20,7 @@ const Base: React.FC<BaseProps> = () => {
 
   React.useLayoutEffect(() => {
     initialize();
-  })
+  });
 
   return (
     <>

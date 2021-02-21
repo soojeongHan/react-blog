@@ -12,19 +12,25 @@ type HeaderContainerProps = {
 const HeaderContainer: React.FC<HeaderContainerProps> = () => {
   const dispatch = useDispatch();
   const logged = useSelector<RootState, boolean>(state => state.base.logged);
-  console.log(logged);
   const isEditing = history.location.pathname !== "/" && history.location.pathname.includes('post');
   const postId = isEditing ? history.location.pathname.split("post/").pop() : "";
 
   const goHomepage = () => {
-    if (history.location.pathname === "/") window.location.reload();
-    else history.push('/');
+    history.location.pathname === "/"
+      ? window.location.reload()
+      : history.push('/');
   }
   const handleRemove = () => {
     dispatch(showModal('remove'));
   }
+
   return (
-    <Header goHomepage={goHomepage} handleRemove={handleRemove} isEditing={isEditing} postId={postId} logged={logged} />
+    <Header
+      goHomepage={goHomepage}
+      handleRemove={handleRemove}
+      isEditing={isEditing}
+      postId={postId}
+      logged={logged} />
   );
 }
 

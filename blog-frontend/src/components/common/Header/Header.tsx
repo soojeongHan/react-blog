@@ -21,10 +21,10 @@ const Header: React.FC<HeaderType> = ({ isEditing, postId, goHomepage, handleRem
           <div onClick={goHomepage}>Soo Dev-Blog</div>
         </div>
         <div className={cx('right')}>
-          {isEditing && logged &&
+          {(isEditing && logged) &&
             <Button theme="outline" to={`/editor?id=${postId}`}>수정</Button>
           }
-          {isEditing && logged &&
+          {(isEditing && logged) &&
             <Button theme="outline" onClick={handleRemove}>삭제</Button>
           }
           {logged && <Button theme="outline" to="/editor">새 포스트</Button>}

@@ -28,11 +28,12 @@ const LoginModalContainer: React.FC<LoginModalContainerProps> = () => {
   const handleCancel = () => {
     dispatch(BaseAction.hideModal('login'));
     dispatch(BaseAction.changePasswordInput(''));
+
   }
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(BaseAction.changePasswordInput(e.target.value));
   }
-  const handleKeyPress = (e: any) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleLogin();
   }
   return (

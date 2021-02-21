@@ -31,7 +31,8 @@ const app = new Koa();
 const router = new Router();
 
 const sessionConfig = {
-  maxAge: 86400000, // 1 day
+  // maxAge: 86400000, // 1 day
+  maxAge: 60000 // 1분
 }
 
 app

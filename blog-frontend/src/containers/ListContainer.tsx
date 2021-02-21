@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PageTemplate from 'src/components/common/PageTemplate';
 import List from 'src/components/list';
-import { getList as getListSaga } from 'src/redux/modules/blog'
+import { BlogStateType, getList as getListSaga } from 'src/redux/modules/blog'
 import { RootState } from 'src/redux/modules/rootReducer';
 import { PostResType } from 'src/types';
 import TimeAgo from 'javascript-time-ago';
@@ -18,9 +18,10 @@ type ListContainerProps = {
 
 const ListContainer: React.FC<ListContainerProps> = ({ page, tag }) => {
   const dispatch = useDispatch();
-  const posts = useSelector<RootState, PostResType[] | null>(state => state.blog.posts);
-  const lastPage = useSelector<RootState, number | null>(state => state.blog.lastpage);
-  const loading = useSelector<RootState, boolean>(state => state.blog.loading);
+  const blog = useSelector<RootState, BlogStateType>(state => state.blog);
+  const { posts, lastpage: lastPage, loading }: {
+    posts: PostResType[] | null, lastpage: number | null, loading: boolean
+  } = blog;
 
   useLayoutEffect(() => {
     dispatch(getListSaga(page, tag));
@@ -36,23 +37,28 @@ const ListContainer: React.FC<ListContainerProps> = ({ page, tag }) => {
 
   TimeAgo.addLocale(ko);
   const EditedPost = posts
-    ? posts.map(post => {
-      const tmpPost: PostResType = {
-        postId: post.postId,
-        title: post.title,
-        body: removeMarkdown(post.body),
-        publishedDate: new TimeAgo('ko-KR').format(new Date(post.publishedDate).getTime()),
-        tags: post.tags
+    ? posts.map(tmpPost => {
+      const post: PostResType = {
+        postId: tmpPost.postId,
+        title: tmpPost.title,
+        body: removeMarkdown(tmpPost.body),
+        publishedDate: new TimeAgo('ko-KR').format(new Date(tmpPost.publishedDate).getTime()),
+        tags: tmpPost.tags
       }
-      return tmpPost;
+      return post;
     })
-    : posts
+    : []
 
   if (loading) return <div></div>;
   return (
     <PageTemplate>
-      <List posts={EditedPost} lastPage={lastPage} urlPush={urlPush} />
-      <Pagenation lastPage={lastPage ? lastPage : 1} createPagePath={createPagePath} page={page} />
+      <List
+        posts={EditedPost}
+        urlPush={urlPush} />
+      <Pagenation
+        lastPage={lastPage ? lastPage : 1}
+        createPagePath={createPagePath}
+        page={page} />
     </PageTemplate>
   );
 }

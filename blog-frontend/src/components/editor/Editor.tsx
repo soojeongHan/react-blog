@@ -14,14 +14,13 @@ type EditorProps = {
   leftPercentage: number;
 
   addPost: (post: PostReqType) => void;
-  updatePost: (post: PostReqType) => void;
   onChange: (e: string | undefined) => void;
-  handleMouseMove: (e: any) => void;
+  handleMouseMove: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   handleIsDown: (down: boolean) => void;
 }
 
 const Editor: React.FC<EditorProps> = ({
-  post, onChange, body, addPost, updatePost, leftPercentage, handleMouseMove, handleIsDown
+  post, onChange, body, addPost, leftPercentage, handleMouseMove, handleIsDown
 }) => {
   const onSubmit = () => {
     const title = titleRef.current?.value;
@@ -45,6 +44,7 @@ const Editor: React.FC<EditorProps> = ({
       addPost(post);
     }
   }
+
   const onGoBack = () => {
     history.goBack();
   }
