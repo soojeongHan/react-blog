@@ -1,18 +1,15 @@
 import React from 'react';
-import PageTemplate from 'src/components/common/PageTemplate';
-import PostBody from 'src/components/post/PostBody';
-import PostInfo from 'src/components/post/PostInfo';
+import { RouteComponentProps } from 'react-router-dom';
+import PostContainer from 'src/containers/PostContainer';
 
 type PostPageProps = {
-
+  id: string,
 }
 
-const PostPage: React.FC<PostPageProps> = () => {
+const PostPage: React.FC<RouteComponentProps<PostPageProps>> = ({ match }) => {
+  const postId = match.params.id;
   return (
-    <PageTemplate>
-      <PostInfo />
-      <PostBody />
-    </PageTemplate>
+    <PostContainer postId={postId} />
   );
 }
 

@@ -1,23 +1,23 @@
 import React from 'react';
 import styles from './PageTemplate.scss';
 import classNames from 'classnames';
-import Header from 'src/components/common/Header';
-import Footer from 'src/components/common/Footer';
+import HeaderContainer from 'src/containers/HeaderContainer';
+import FooterContainer from 'src/containers/FooterContainer';
 
 const cx = classNames.bind(styles);
 
 interface PageTempateProps {
-  children : React.ReactNode;
+  children: React.ReactNode;
 }
 
-const PageTemplate: React.FC<PageTempateProps> = ({children}) => {
+const PageTemplate: React.FC<PageTempateProps> = ({ children }) => {
   return (
     <div className={cx('page-template')}>
-      <Header />
+      <HeaderContainer />
       <main>
         {children}
       </main>
-      <Footer />
+      <FooterContainer />
     </div>
   );
 }

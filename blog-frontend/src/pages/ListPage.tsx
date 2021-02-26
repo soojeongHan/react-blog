@@ -1,18 +1,17 @@
 import React from 'react';
-import PageTemplate from 'src/components/common/PageTemplate';
-import ListWrapper from 'src/components/list/ListWrapper';
-import Pagenation from 'src/components/list/Pagenation';
-import PostList from 'src/components/list/PostList';
+import { RouteComponentProps } from 'react-router-dom';
+import ListContainer from 'src/containers/ListContainer';
 
+type ListPageProps = {
+  page: string | undefined,
+  tag: string | undefined,
+}
 
-const ListPage: React.FC = () => {
+const ListPage: React.FC<RouteComponentProps<ListPageProps>> = ({ match }) => {
+  const { page = 1, tag } = match.params;
+  const pageNum = Number(page);
   return (
-    <PageTemplate>
-      <ListWrapper>
-        <PostList />
-        <Pagenation />
-      </ListWrapper>
-    </PageTemplate>
+    <ListContainer page={pageNum < 1 ? 1 : pageNum} tag={tag} />
   );
 }
 

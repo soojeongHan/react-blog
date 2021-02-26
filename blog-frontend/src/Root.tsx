@@ -1,8 +1,8 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
-import App from './containers/App';
-import create from './redux/create';
+import App from 'src/containers/App';
+import create from 'src/redux/create';
 
 const store = create();
 const Root: React.FC = () => {

@@ -14,6 +14,7 @@
     "@types/classnames": "^2.2.11",
     "@types/codemirror": "^0.0.106",
     "@types/immutable": "^3.8.7",
+    "@types/javascript-time-ago": "^2.0.1",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/node-sass": "^4.11.1",
@@ -24,6 +25,7 @@
     "@types/redux": "^3.6.0",
     "@types/redux-actions": "^2.6.1",
     "@types/redux-saga": "^0.10.5",
+    "@types/remove-markdown": "^0.1.1",
     "@types/sass-loader": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
@@ -38,7 +40,7 @@
     "camelcase": "^6.1.0",
     "case-sensitive-paths-webpack-plugin": "2.3.0",
     "codemirror": "^5.59.1",
-    "connected-react-router": "^6.8.0",
+    "connected-react-router": "6.0.0",
     "css-loader": "4.3.0",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
@@ -54,18 +56,19 @@
     "eslint-webpack-plugin": "^2.1.0",
     "file-loader": "6.1.1",
     "fs-extra": "^9.0.1",
-    "history": "^5.0.0",
+    "history": "^4.7.2",
     "html-webpack-plugin": "4.5.0",
     "identity-obj-proxy": "3.0.0",
     "include-media": "^1.4.9",
+    "javascript-time-ago": "^2.3.4",
     "jest": "26.6.0",
     "jest-circus": "26.6.0",
     "jest-resolve": "26.6.0",
     "jest-watch-typeahead": "0.6.1",
     "json-parse-better-errors": "^1.0.2",
-    "marked": "^1.2.7",
     "mini-css-extract-plugin": "0.11.3",
     "node-sass": "4.14.1",
+    "nodemon": "^2.0.7",
     "open-color": "^1.8.0",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "pnp-webpack-plugin": "1.6.4",
@@ -87,12 +90,14 @@
     "redux-actions": "^2.6.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-saga": "^1.1.3",
+    "remove-markdown": "^0.3.0",
     "resolve": "1.18.1",
     "resolve-url-loader": "^3.1.2",
     "sass-loader": "8.0.2",
     "semver": "7.3.2",
     "style-loader": "1.3.0",
     "terser-webpack-plugin": "4.2.3",
+    "ts-node": "^9.1.1",
     "ts-pnp": "1.2.0",
     "typesafe-actions": "^5.1.0",
     "typescript": "^4.0.3",
@@ -104,9 +109,11 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
-    "start": "node -r tsconfig-paths/register scripts/start.js",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "start": "cp ./.env.prod ./.env && node -r tsconfig-paths/register scripts/start.js",
+    "build": "node -r tsconfig-paths/register scripts/build.js",
+    "test": "node scripts/test.js",
+    "deploy": "aws s3 sync ./build s3://soo-dev-blog-frontend --profile=soo-dev-blog",
+    "invalidate": "aws cloudfront create-invalidation --profile=soo-dev-blog --distribution-id E37GHAACBYRS6F --paths / /index.html /error.html /service-worker.js /manifest.json /favicon.ico"
   },
   "eslintConfig": {
     "extends": [
@@ -186,6 +193,5 @@
   "devDependencies": {
     "@types/markdown-it": "^12.0.1",
     "tsconfig-paths": "^3.9.0"
-  },
-  "proxy": "http://localhost:4000"
+  }
 }

@@ -1,9 +1,16 @@
 import React from 'react';
 import EditorContainer from 'src/containers/EditorContainer';
+import { RouteComponentProps } from 'react-router-dom';
 
-const EditorPage: React.FC = () => {
+type LocationParams = {
+  search: string | undefined,
+}
+
+const EditorPage: React.FC<RouteComponentProps<LocationParams>> = ({ location }) => {
+  const postId = location.search.split("id=").pop();
+  const isNewPost = postId === "";
   return (
-    <EditorContainer />  
+    <EditorContainer postId={postId} isNewPost={isNewPost} />
   );
 }
 

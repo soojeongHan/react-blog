@@ -1,6 +1,7 @@
 const Post = require("models/post");
 const Joi = require("joi");
 const {ObjectId} = require('mongoose').Types;
+const colours = require('../style');
 
 exports.isValidObjectId = (ctx,next) => {
   const {id} = ctx.params;
@@ -25,31 +26,41 @@ exports.write = async(ctx) => {
     ctx.body = result.error;
     return;
   }
-
   const {title, body, tags} = ctx.request.body;
   
   const post = new Post({
-    title, body, tags
+    title, body, tags,
+    publishedDate: new Date(),
   });
 
   try {
     await post.save();
     ctx.body = post;
+    console.log(colours.bg.white, colours.fg.black, "Success - Write Post", colours.reset);
   } catch(e) {
     ctx.throw(e, 500);
   }
 }
 
 exports.list = async(ctx) => {
+
   const page = parseInt(ctx.query.page || 1, 10);
+  const { tag } = ctx.query;
+
+  // tag 존재 유무에 따라 find 함수에 넣을 파라미터
+  const query = tag 
+    ? {tags : tag}
+    // tag가 undefined일 경우 빈 객체를 전달해서 아무런 데이터가 나타나지 않는 경우를 방지한다.
+    : {};
+
   if(page < 1) {
     ctx.status = 400;
     return;
   }
 
   try {
-    const posts = await Post.find()
-      .sort({_id: -1})
+    const posts = await Post.find(query)
+      .sort({publishedDate: -1})
       .limit(10)
       .skip((page-1) * 10)
       .lean()
@@ -61,8 +72,11 @@ exports.list = async(ctx) => {
         ? post.body
         : `${post.body.slice(0, 200)}...`
     });
+    ctx.set({
+      lastPage: Math.ceil(postCount/10)
+    })
     ctx.body = posts.map(limitBodyLength);
-    ctx.set('Last-Page', Math.ceil(postCount / 10));    
+    console.log(colours.bg.white, colours.fg.black, "Success - List", colours.reset);
   }
   catch(e) {
     ctx.throw(e, 500);
@@ -70,6 +84,7 @@ exports.list = async(ctx) => {
 }
 
 exports.read = async(ctx) => {
+  console.log(ctx.session.logged);
   const {id} = ctx.params;
   try {
     const post = await Post.findById(id).exec();
@@ -78,6 +93,7 @@ exports.read = async(ctx) => {
       return;
     }
     ctx.body = post;
+    console.log(colours.bg.white, colours.fg.black, "Success - Read", colours.reset);
   }
   catch(e) {
     ctx.throw(e, 500);
@@ -89,6 +105,7 @@ exports.remove = async(ctx) => {
   try {
     await Post.findByIdAndRemove(id).exec();
     ctx.status = 204;
+    console.log(colours.bg.white, colours.fg.black, "Success - Remove", colours.reset);
   } catch(e) {
     ctx.throw(e, 500);
   }
@@ -96,16 +113,30 @@ exports.remove = async(ctx) => {
 
 exports.update = async(ctx) => {
   const {id} = ctx.params;
+  const updatePost = {
+    ...ctx.request.body,
+    publishedDate: new Date(),
+  }
   try {
-    const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
+    const post = await Post.findByIdAndUpdate(id, updatePost, {
       new: true
     }).exec();
+    console.log(post);
     if(!post) {
       ctx.status = 404;
       return;
     }
     ctx.body = post;
+    console.log(colours.bg.white, colours.fg.black, "Success - Update", colours.reset);
   } catch(e) {
     ctx.throw(e, 500);
   }
+}
+
+exports.checkLogin = (ctx, next) => {
+  if(!ctx.session.logged) {
+    ctx.status = 401; // Unauthorized
+    return null;
+  }
+  return next();
 }

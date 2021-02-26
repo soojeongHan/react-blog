@@ -1,0 +1,97 @@
+@import '../../styles/lib/utils';
+
+.post-info {
+  background: $oc-gray-5;
+  height: 24rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .info {
+    margin-top: -5rem;
+    width: 1024px;
+    padding: 1rem;
+    color: black;
+
+    h1 {
+      font-weight: 300;
+      font-size: 3rem;
+      margin: 0;
+      word-wrap: break-word;
+    }
+
+    .tags {
+      color: $oc-blue-7;
+      margin-top: 1rem;
+      font-size: 1.25rem;
+      font-weight: 500;
+      
+      a {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      a + a {
+        margin-left: 0.25rem;
+      }
+    }
+    .date {
+      text-align: right;
+      opacity: 0.75;
+      font-style: italic;
+      font-size: 1.25rem;
+    }
+  }
+  
+  @include media("<large") {
+    .info {
+      h1 {
+        font-size: 2rem;
+      }
+      .tags, .date {
+        font-size: 1rem;
+      }
+      width: 768px;
+    }
+  }
+  
+  @include media("<medium") {
+    height: auto;
+    padding-bottom: 4rem;
+  
+    .info {
+      padding-top: 1rem;
+      margin: 0;
+      
+      .tags {
+        margin-top: 0.25rem;
+      }
+      .tags, .date {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+.post-body {
+  .paper {
+    padding: 2rem;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    background: #ffffff;
+    @include material-shadow(4, 0.5);
+    
+    transform: translateY(-3rem);
+    margin: 0 auto;
+    min-height: 20rem;
+
+    width: 1024px;
+    @include media("<large") {
+      width: 768px;
+    }
+    @include media("<medium") {
+      width: calc(100% - 2rem);
+    }
+  }
+}
+
