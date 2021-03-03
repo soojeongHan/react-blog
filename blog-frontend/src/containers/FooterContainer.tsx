@@ -9,6 +9,7 @@ type FooterContainerProps = {
 }
 
 const FooterContainer: React.FC<FooterContainerProps> = () => {
+
   const dispatch = useDispatch();
   const logged = useSelector<RootState, boolean>(state => state.base.logged);
   const handleLoginClick = async () => {

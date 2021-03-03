@@ -1,7 +1,7 @@
 @import '../../styles/lib/utils';
 
 .post-info {
-  background: $oc-gray-5;
+  background: #000000;
   height: 24rem;
   display: flex;
   align-items: center;
@@ -11,9 +11,11 @@
     margin-top: -5rem;
     width: 1024px;
     padding: 1rem;
-    color: black;
+    color: #ffffff;;
 
     h1 {
+      display: flex;
+      justify-content: center;
       font-weight: 300;
       font-size: 3rem;
       margin: 0;
@@ -21,6 +23,8 @@
     }
 
     .tags {
+      display: flex;
+      justify-content: center;
       color: $oc-blue-7;
       margin-top: 1rem;
       font-size: 1.25rem;
@@ -75,10 +79,12 @@
 
 .post-body {
   .paper {
+    word-break: break-all;
     padding: 2rem;
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
-    background: #ffffff;
+    background: $oc-gray-9;
+    color: #ffffff;
     @include material-shadow(4, 0.5);
     
     transform: translateY(-3rem);
@@ -92,6 +98,7 @@
     @include media("<medium") {
       width: calc(100% - 2rem);
     }
+
   }
 }
 

@@ -43,7 +43,7 @@ exports.write = async(ctx) => {
 }
 
 exports.list = async(ctx) => {
-
+  console.log(ctx.session.logged);
   const page = parseInt(ctx.query.page || 1, 10);
   const { tag } = ctx.query;
 
@@ -84,7 +84,6 @@ exports.list = async(ctx) => {
 }
 
 exports.read = async(ctx) => {
-  console.log(ctx.session.logged);
   const {id} = ctx.params;
   try {
     const post = await Post.findById(id).exec();

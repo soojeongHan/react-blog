@@ -1,13 +1,13 @@
 @import '../../../styles/lib/utils';
 
 .header {
-  background: $oc-gray-7;
+  background: #000000;
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 3;
   .header-content {
-    height: 5rem;
+    height: 4rem;
     width: 1400px;
     margin: 0 auto;
     padding-left: 3rem;
@@ -25,7 +25,20 @@
     }
 
     .brand {
-      color: #ffffff;
+      display: flex;
+      .logo {
+        margin-top: .4rem;
+        margin-right: .3rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        background: url('../../../files/notebook.png');
+        background-size: contain;
+        @include media("<small") {
+          background: url('../../../files/phone.png');
+          background-size: contain;
+        }
+      }
+      color: $oc-blue-6;
       font-size: 1.5rem;
       font-weight: 600;
       div {

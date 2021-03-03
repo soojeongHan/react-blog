@@ -9,16 +9,17 @@
   font-size: 0.9rem;
   color: #ffffff;
   cursor: pointer;
+  border: 1px solid #ffffff;
   user-select: none; // NO DRAG
   display: inline-flex;
 
   &.default {
-    background: black;
+    background: #000000;
     &:hover {
-      background: black;
+      background: $oc-gray-9;
     }
     &:active {
-      background: black;
+      background: #000000;
     }
   }
 
@@ -50,13 +51,21 @@
   }
 
   &.disabled {
-    background: $oc-gray-4;
-    color: $oc-gray-6;
-    cursor: pointer;
-    &:hover, &:active {
-      box-shadow: none;
-      background: $oc-gray-4;
+    background: #000000;
+    color: #000000;
+    border: none;
+    cursor: auto;
+    &:hover {
+      background: #000000;
+      color: #000000;
+      border: none;
     }
+    &:active {
+      background: #000000;
+      color: #000000;
+      border: none;
+    }
+    
   }
 
   & + & {

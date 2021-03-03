@@ -17,8 +17,9 @@ const Header: React.FC<HeaderType> = ({ isEditing, postId, goHomepage, handleRem
   return (
     <header className={cx('header')}>
       <div className={cx('header-content')}>
-        <div className={cx('brand')}>
-          <div onClick={goHomepage}>Soo Dev-Blog</div>
+        <div className={cx('brand')} onClick={goHomepage}>
+          <div className={cx('logo')}></div>
+          <div>Soo Blog</div>
         </div>
         <div className={cx('right')}>
           {(isEditing && logged) &&
@@ -30,6 +31,7 @@ const Header: React.FC<HeaderType> = ({ isEditing, postId, goHomepage, handleRem
           {logged && <Button theme="outline" to="/editor">새 포스트</Button>}
         </div>
       </div>
+
     </header>
   );
 }

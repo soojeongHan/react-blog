@@ -1,13 +1,10 @@
 import Axios from 'axios';
+// 
 
-// cookie 허용
-const headerOption = {
+const config = {
+  baseURL: process.env.NODE_ENV === "development" ? "http://localhost:5000" : "https://soojeonghan.gq",
   withCredentials: true,
 }
-
-const axios = Axios.create({
-  baseURL: "https://soojeonghan.gq",
-  headers: headerOption,
-})
+const axios = Axios.create(config);
 
 export default axios;

@@ -66,16 +66,16 @@ const Editor: React.FC<EditorProps> = ({
         <div className={cx('pane', 'editor')} style={{ flex: leftPercentage }}>
           <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={post?.title} />
           <div className={cx('code-editor')}>
-            <MDEditor className={cx('w-md-editor')} value={body} onChange={onChange} preview={'edit'} />
+            <MDEditor className={cx('w-md-editor', 'edit')} value={body} onChange={onChange} preview={'edit'} />
           </div>
           <div className={cx('tags')}>
             <div className={cx('description')}>태그</div>
             <input name="tags" placeholder="태그를 입력하세요 (쉼표로 구분)" ref={tagsRef} defaultValue={post?.tags} />
           </div>
         </div>
-        <div className={cx('pane')} style={{ flex: 1 - leftPercentage }}>
+        <div className={cx('pane', 'preview')} style={{ flex: 1 - leftPercentage }}>
           <div className={cx('code-editor')}>
-            <MDEditor.Markdown source={body || ''} className={cx('w-md-editor', 'preview')} />
+            <MDEditor.Markdown source={body || ''} className={cx('w-md-editor')} />
           </div>
         </div>
         <div
