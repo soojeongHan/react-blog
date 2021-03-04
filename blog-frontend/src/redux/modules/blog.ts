@@ -69,7 +69,7 @@ export default reducer;
 
 export const { getPost, getList, addPost, updatePost, deletePost } = createActions(
   {
-    GET_POST: (postId: number, isEditing: boolean) => ({ postId, isEditing }),
+    GET_POST: (postId: number, mode: string) => ({ postId, mode }),
     GET_LIST: (page: number, tag: string) => ({ page, tag }),
     ADD_POST: (post: PostReqType) => ({ post }),
     UPDATE_POST: (postId: number, post: PostReqType) => ({ postId, post }),
@@ -124,7 +124,7 @@ function* getListSaga(action: GetListActionType) {
 interface GetPostActionType extends AnyAction {
   payload: {
     postId: number,
-    isEditing: boolean,
+    mode: string,
   }
 }
 
@@ -140,7 +140,7 @@ function* getPostSaga(action: GetPostActionType) {
       publishedDate: data.publishedDate
     }
     yield put(successPost(post));
-    yield put(replace(action.payload.isEditing ? `/editor?id=${action.payload.postId}` : `/post/${action.payload.postId}`));
+    yield put(replace(action.payload.mode === 'edit' ? `/editor?id=${action.payload.postId}` : `/post/${action.payload.postId}`));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

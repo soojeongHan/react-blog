@@ -48,7 +48,7 @@ app
 .use(session(sessionConfig, app))
 .use(bodyParser())
 .use(cors({
-    origin: NODE_ENV === "DEVELOPMENT" ? "http://172.25.32.1:3000" : "https://soojeonghan.com",
+    origin: NODE_ENV === "DEVELOPMENT" ? "http://172.18.224.1:3000" : "https://soojeonghan.com",
     exposeHeaders: 'lastpage',
     credentials: true,
   }))
@@ -58,17 +58,16 @@ app.keys = [signKey];
 router.use('/api', api.routes());
 
 if(NODE_ENV === "DEVELOPMENT") {
-  console.log("DEV");
   app.listen(port, () => {
     console.log(`http://localhost:${port}/`)
   })
 } else {
-  console.log("PROD")
   https.createServer({
     ca: fs.readFileSync('/etc/letsencrypt/live/soojeonghan.gq/fullchain.pem'),
     key: fs.readFileSync('/etc/letsencrypt/live/soojeonghan.gq/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/soojeonghan.gq/cert.pem')
   }, app.callback()).listen(port, () => {
+    console.log("origin : " + NODE_ENV === "DEVELOPMENT" ? "http://172.18.224.1:3000" : "https://soojeonghan.com");
     console.log("https server start");
   });
 }

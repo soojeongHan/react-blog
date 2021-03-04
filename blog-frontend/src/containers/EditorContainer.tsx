@@ -16,7 +16,7 @@ const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) 
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    if (!isNewPost) dispatch(getPostSaga(postId, true));
+    if (!isNewPost) dispatch(getPostSaga(postId, "edit"));
   }, [dispatch, postId, isNewPost]);
 
   const post = useSelector<RootState, PostResType | null>(state => state.blog.post);
@@ -24,6 +24,7 @@ const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) 
   const [leftPercentage, setLeftPercentage] = React.useState<number>(0.5);
   const [isDown, setIsDown] = React.useState<boolean>(false);
 
+  // 에디터와 미리보기의 크기를 조정할 수 있는 기능
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const lp = e.clientX / window.innerWidth;
     if (isDown && lp < 0.75 && lp > 0.25) {
@@ -37,16 +38,14 @@ const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) 
     setBody(e);
   }
   const addPost = (post: PostReqType) => {
-    console.log("addPost");
     dispatch(addPostSaga(post));
   }
   const updatePost = (post: PostReqType) => {
-    console.log("updatePost");
     dispatch(updatePostSaga(postId, post));
   }
 
   return (
-    <Editor onChange={onChange} body={body} addPost={isNewPost ? addPost : updatePost} post={isNewPost ? null : post} leftPercentage={leftPercentage} handleMouseMove={handleMouseMove} handleIsDown={handleIsDown} />
+    <Editor onChange={onChange} body={body} handlePost={isNewPost ? addPost : updatePost} post={isNewPost ? null : post} leftPercentage={leftPercentage} handleMouseMove={handleMouseMove} handleIsDown={handleIsDown} />
   );
 }
 

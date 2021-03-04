@@ -22,6 +22,7 @@ const LoginModalContainer: React.FC<LoginModalContainerProps> = () => {
       await dispatch(BaseAction.reqLogin(password));
       await push('/');
       localStorage.logged = "true";
+      document.documentElement.scrollTop = 0;
     }
     catch (e) {
       console.error(e);

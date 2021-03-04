@@ -17,6 +17,7 @@ const FooterContainer: React.FC<FooterContainerProps> = () => {
     if (logged) {
       try {
         await dispatch(reqLogout());
+        document.documentElement.scrollTop = 0;
         localStorage.removeItem('logged');
         window.location.reload();
       }
@@ -28,6 +29,7 @@ const FooterContainer: React.FC<FooterContainerProps> = () => {
     else {
       dispatch(showModal('login'));
       dispatch(initializeLoginModal());
+
     }
   }
   return (

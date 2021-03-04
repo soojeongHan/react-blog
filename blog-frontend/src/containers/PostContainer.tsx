@@ -15,7 +15,7 @@ const PostContainer: React.FC<PostContainerProps> = ({ postId }) => {
   const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
-    dispatch(getPostSaga(postId, false));
+    dispatch(getPostSaga(postId, "post"));
   }, [dispatch, postId]);
 
   const post = useSelector<RootState, PostResType | null>(state => state.blog.post);

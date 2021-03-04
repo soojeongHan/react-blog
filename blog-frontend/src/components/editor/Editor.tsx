@@ -13,14 +13,14 @@ type EditorProps = {
   body: string | undefined,
   leftPercentage: number;
 
-  addPost: (post: PostReqType) => void;
+  handlePost: (post: PostReqType) => void;
   onChange: (e: string | undefined) => void;
   handleMouseMove: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   handleIsDown: (down: boolean) => void;
 }
 
 const Editor: React.FC<EditorProps> = ({
-  post, onChange, body, addPost, leftPercentage, handleMouseMove, handleIsDown
+  post, onChange, body, handlePost, leftPercentage, handleMouseMove, handleIsDown
 }) => {
   const onSubmit = () => {
     const title = titleRef.current?.value;
@@ -41,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({
             .map(tag => tag.trim())
             .filter(tag => tag !== "")))
       }
-      addPost(post);
+      handlePost(post);
     }
   }
 
@@ -66,7 +66,7 @@ const Editor: React.FC<EditorProps> = ({
         <div className={cx('pane', 'editor')} style={{ flex: leftPercentage }}>
           <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={post?.title} />
           <div className={cx('code-editor')}>
-            <MDEditor className={cx('w-md-editor', 'edit')} value={body} onChange={onChange} preview={'edit'} />
+            <MDEditor className={cx('w-md-editor')} value={body} onChange={onChange} preview={'edit'} />
           </div>
           <div className={cx('tags')}>
             <div className={cx('description')}>태그</div>
