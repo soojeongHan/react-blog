@@ -4,6 +4,7 @@ const postsCtrl = require("./posts.ctrl");
 const posts = new Router();
 
 posts.get('/', postsCtrl.list);
+posts.get('/search/:content', postsCtrl.search);
 posts.get('/:id', postsCtrl.isValidObjectId, postsCtrl.read);
 
 // 인증 X

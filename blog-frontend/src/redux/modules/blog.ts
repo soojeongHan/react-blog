@@ -70,7 +70,7 @@ export default reducer;
 export const { getPost, getList, addPost, updatePost, deletePost } = createActions(
   {
     GET_POST: (postId: number, mode: string) => ({ postId, mode }),
-    GET_LIST: (page: number, tag: string) => ({ page, tag }),
+    GET_LIST: (page: number, tag: string, search: string) => ({ page, tag, search }),
     ADD_POST: (post: PostReqType) => ({ post }),
     UPDATE_POST: (postId: number, post: PostReqType) => ({ postId, post }),
     DELETE_POST: (postId: number) => ({ postId }),
@@ -90,13 +90,15 @@ interface GetListActionType extends AnyAction {
   payload: {
     page: number,
     tag: string,
+    search: string,
   }
 }
 
 function* getListSaga(action: GetListActionType) {
   try {
     yield put(pending());
-    const response = yield call(BlogService.getList, action.payload.page, action.payload.tag);
+    const { page, tag, search } = action.payload;
+    const response = yield call(BlogService.getList, page, tag, search);
     const posts: PostResType[] = Array.from(response.data).map(v => {
       const value = Object(v);
       const post = {
@@ -110,11 +112,13 @@ function* getListSaga(action: GetListActionType) {
     })
     const lastpage = response.headers.lastpage;
     yield put(successList(posts, lastpage));
-    yield put(action.payload.tag
-      ? replace(`${action.payload.tag}`)
-      : action.payload.page !== 1
-        ? replace(`${action.payload.page}`)
-        : replace("/"));
+    yield put(tag
+      ? replace(`${tag}`)
+      : search
+        ? replace(`${search}`)
+        : page !== 1
+          ? replace(`${page}`)
+          : replace("/"));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

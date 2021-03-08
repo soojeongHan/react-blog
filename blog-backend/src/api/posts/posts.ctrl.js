@@ -43,15 +43,17 @@ exports.write = async(ctx) => {
 }
 
 exports.list = async(ctx) => {
-  console.log(ctx.session.logged);
+  
   const page = parseInt(ctx.query.page || 1, 10);
-  const { tag } = ctx.query;
+  const { tag, search } = ctx.query;
 
   // tag 존재 유무에 따라 find 함수에 넣을 파라미터
   const query = tag 
     ? {tags : tag}
     // tag가 undefined일 경우 빈 객체를 전달해서 아무런 데이터가 나타나지 않는 경우를 방지한다.
-    : {};
+    : search
+      ? {title: search}
+      : {};
 
   if(page < 1) {
     ctx.status = 400;
@@ -128,6 +130,29 @@ exports.update = async(ctx) => {
     ctx.body = post;
     console.log(colours.bg.white, colours.fg.black, "Success - Update", colours.reset);
   } catch(e) {
+    ctx.throw(e, 500);
+  }
+}
+
+exports.search = async(ctx) => {
+  const { content } = ctx.params;
+  const query = content 
+  ? {title : {$regex: content}}
+  : {};
+
+  try {
+    const posts = await Post.find(query)
+      .lean()
+      .exec();
+    const arr = posts.map(post => {
+      return {
+        title: post.title,
+      }
+    });
+    ctx.body = arr;
+    console.log(colours.bg.white, colours.fg.black, "Success Search", colours.reset);
+  }
+  catch(e) {
     ctx.throw(e, 500);
   }
 }

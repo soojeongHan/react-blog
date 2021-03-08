@@ -5,13 +5,14 @@ import ListContainer from 'src/containers/ListContainer';
 type ListPageProps = {
   page: string | undefined,
   tag: string | undefined,
+  search: string | undefined,
 }
 
 const ListPage: React.FC<RouteComponentProps<ListPageProps>> = ({ match }) => {
-  const { page = 1, tag } = match.params;
+  const { page = 1, tag, search } = match.params;
   const pageNum = Number(page);
   return (
-    <ListContainer page={pageNum < 1 ? 1 : pageNum} tag={tag} />
+    <ListContainer page={pageNum < 1 ? 1 : pageNum} tag={tag} search={search} />
   );
 }
 

@@ -14,9 +14,10 @@ import Pagenation from 'src/components/list/Pagenation';
 type ListContainerProps = {
   page: number,
   tag?: string,
+  search?: string,
 }
 
-const ListContainer: React.FC<ListContainerProps> = ({ page, tag }) => {
+const ListContainer: React.FC<ListContainerProps> = ({ page, tag, search }) => {
   const dispatch = useDispatch();
   const blog = useSelector<RootState, BlogStateType>(state => state.blog);
   const { posts, lastpage: lastPage, loading }: {
@@ -24,9 +25,9 @@ const ListContainer: React.FC<ListContainerProps> = ({ page, tag }) => {
   } = blog;
 
   useLayoutEffect(() => {
-    dispatch(getListSaga(page, tag));
+    dispatch(getListSaga(page, tag, search));
     document.documentElement.scrollTop = 0;
-  }, [dispatch, page, tag]);
+  }, [dispatch, page, tag, search]);
 
   const urlPush = (url: string) => {
     dispatch(push(url));

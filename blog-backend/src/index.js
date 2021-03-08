@@ -48,7 +48,7 @@ app
 .use(session(sessionConfig, app))
 .use(bodyParser())
 .use(cors({
-    origin: NODE_ENV === "DEVELOPMENT" ? "http://172.18.224.1:3000" : "https://soojeonghan.com",
+    origin: NODE_ENV === "DEVELOPMENT" ? "http://localhost:3000" : "https://soojeonghan.com",
     exposeHeaders: 'lastpage',
     credentials: true,
   }))
