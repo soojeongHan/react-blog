@@ -52,9 +52,9 @@ exports.list = async(ctx) => {
     ? {tags : tag}
     // tag가 undefined일 경우 빈 객체를 전달해서 아무런 데이터가 나타나지 않는 경우를 방지한다.
     : search
-      ? {title: search}
+      ? {title: {$regex: search, $options: 'i'}}
       : {};
-
+      
   if(page < 1) {
     ctx.status = 400;
     return;
@@ -137,19 +137,17 @@ exports.update = async(ctx) => {
 exports.search = async(ctx) => {
   const { content } = ctx.params;
   const query = content 
-  ? {title : {$regex: content}}
+  // $regex: content => 대소문자 가리지않고 검색
+  // $options: 'i' => 제목에 검색 내용이 포함되어있으면 모두 포함
+  ? {title : {$regex: content, $options: 'i'}}
   : {};
 
   try {
-    const posts = await Post.find(query)
+    // _id는 default라 false 처리하고, 필요한 데이터인 title만 가져온다.
+    const posts = await Post.find(query, {"_id": false, "title": true})
       .lean()
       .exec();
-    const arr = posts.map(post => {
-      return {
-        title: post.title,
-      }
-    });
-    ctx.body = arr;
+    ctx.body = posts;
     console.log(colours.bg.white, colours.fg.black, "Success Search", colours.reset);
   }
   catch(e) {

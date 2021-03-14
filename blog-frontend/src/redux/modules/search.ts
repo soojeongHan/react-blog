@@ -94,7 +94,6 @@ function* searchContentSaga(action: SearchActionType) {
     response.length
       ? yield put(searchSuccess(data))
       : yield put(searchFail());
-    yield put(showSearchModal());
   }
   catch (error) {
     console.error(error);

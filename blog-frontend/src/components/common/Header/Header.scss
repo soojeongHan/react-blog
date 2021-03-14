@@ -50,64 +50,82 @@
       margin-left: auto;
       display: flex;
 
-      .search-logo {
+      .logo {
         display: flex;
         justify-content: center;
         align-items: center;
         margin-right: .2rem;
         margin-left: .4rem;
+        cursor: pointer;
+        
+        &:hover {
+          transform: scale(1.1);
+        }
+        
         img {
           width: 1.3rem;
         }
       }
-
+      
       .search-input {
-        width: 128px;
+        width: 12rem;
         box-sizing: border-box;
         background: #000000;
         color: #ffffff;
         border: 2px solid #ffffff;
         border-radius: 2px;
         margin-left: .2rem;
-        padding-top: .25rem;
-        padding-bottom: .25rem;
-        font-size: .8rem;
+        padding: .25rem;
+        font-size: 0.8rem;
         font-weight: 600;
-        user-select: none;
+        
+        @include media("<=small") {
+          width: 6rem;
+        }
+        
+        &:focus {
+          outline: none
+        }
       }
 
       .search-view {
         position: absolute;
         display: flex;
         flex-direction: column;
-        left: 400px;
-        top: 100px;
-        width: 128px;
-        height: 28px;
+        left: -9999px;
+        top: -9999px;
+        width: 12rem;
+        height: 2.8rem;
         border: 2px solid #ffffff;
         border-top: 1px solid #ffffff;
         border-radius: 2px;
         background: #000000;
+        word-break: break-all;
+        
+        @include media("<=small") {
+          width: 6rem;
+          word-break: break-all;
+        }
+
         ul {
           margin: 0;
           padding: 0;
           li {
-            display: flex;
-            padding-left: 10px;
-            justify-content: left;
-            align-items: center;
+            width: 12rem;
+            height: 1.7rem;
+            font-size: 0.8rem;
+            padding: .25rem; 
             list-style: none;
-            width: 128px;
-            height: 28px;
             color: #ffffff;
             font-size: .8rem;
             cursor: pointer;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
 
-            -ms-user-select: none; 
-            -moz-user-select: -moz-none;
-            -khtml-user-select: none;
-            -webkit-user-select: none;
-            user-select: none;
+            @include media("<=small") {
+              width: 6rem;
+            }
           }
         }
       }
