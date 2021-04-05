@@ -5,43 +5,38 @@ const POST_API_URL = `/api/posts`;
 
 export default class BlogService {
   public static async writePost(post: PostReqType) {
-    const response = await axios.post(`${POST_API_URL}`, post);
-    return response.data;
+    await axios.post(`${POST_API_URL}`, post);
   }
 
   public static async getPost(id: number) {
-    const response = await axios.get(`${POST_API_URL}/${id}`);
-    return response.data;
+    const { data } = await axios.get(`${POST_API_URL}/${id}`);
+    return { data };
   }
 
-  public static async getList(page: number, tag?: string, search?: string) {
-    const response = await axios.get(
+  public static async getList({ page, tag, search, category }: { page: number, tag: string, search: string, category: string }) {
+    const { data, headers } = await axios.get(
       tag
         ? `${POST_API_URL}/?tag=${tag}`
         : search
           ? `${POST_API_URL}/?search=${search}`
-          : `${POST_API_URL}/?page=${page}`
+          : category
+            ? `${POST_API_URL}/?category=${category}`
+            : `${POST_API_URL}/?page=${page}`
     );
-    return response;
-  }
-
-  public static async getPostList() {
-    const response = await axios.get(`${POST_API_URL}/`);
-    return response;
+    const lastpage = headers.lastpage;
+    return { data, lastpage };
   }
 
   public static async deletePost(id: number) {
-    const response = await axios.delete(`${POST_API_URL}/${id}`);
-    return response.data;
+    await axios.delete(`${POST_API_URL}/${id}`);
   }
 
   public static async updatePost(id: number, post: PostReqType) {
-    const response = await axios.patch(`${POST_API_URL}/${id}`, post);
-    return response.data;
+    await axios.patch(`${POST_API_URL}/${id}`, post);
   }
 
   public static async searchContent(content: string) {
-    const response = await axios.get(`${POST_API_URL}/search/${content}`);
-    return response.data;
+    const { data } = await axios.get(`${POST_API_URL}/search/${content}`);
+    return { data };
   }
 }

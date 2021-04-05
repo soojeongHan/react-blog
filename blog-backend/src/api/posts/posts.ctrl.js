@@ -16,7 +16,8 @@ exports.write = async(ctx) => {
   const schema = Joi.object().keys({
     title: Joi.string().required(),
     body: Joi.string().required(),
-    tags: Joi.array().items(Joi.string()).required()
+    tags: Joi.array().items(Joi.string()).required(),
+    category: Joi.string().required(),
   })
 
   const result = schema.validate(ctx.request.body);
@@ -26,10 +27,10 @@ exports.write = async(ctx) => {
     ctx.body = result.error;
     return;
   }
-  const {title, body, tags} = ctx.request.body;
+  const {title, body, tags, category} = ctx.request.body;
   
   const post = new Post({
-    title, body, tags,
+    title, body, tags, category,
     publishedDate: new Date(),
   });
 
@@ -45,15 +46,18 @@ exports.write = async(ctx) => {
 exports.list = async(ctx) => {
   
   const page = parseInt(ctx.query.page || 1, 10);
-  const { tag, search } = ctx.query;
-
+  const { tag, category, search } = ctx.query;
+  
   // tag 존재 유무에 따라 find 함수에 넣을 파라미터
   const query = tag 
     ? {tags : tag}
     // tag가 undefined일 경우 빈 객체를 전달해서 아무런 데이터가 나타나지 않는 경우를 방지한다.
-    : search
-      ? {title: {$regex: search, $options: 'i'}}
-      : {};
+      : category 
+        ? {category: {$regex: category, $options: 'i'}}
+        : search
+          ? {title: {$regex: search, $options: 'i'}}
+          : {};
+
       
   if(page < 1) {
     ctx.status = 400;
@@ -116,13 +120,12 @@ exports.update = async(ctx) => {
   const {id} = ctx.params;
   const updatePost = {
     ...ctx.request.body,
-    publishedDate: new Date(),
+    updatedDate: new Date(),
   }
   try {
     const post = await Post.findByIdAndUpdate(id, updatePost, {
       new: true
     }).exec();
-    console.log(post);
     if(!post) {
       ctx.status = 404;
       return;
@@ -136,15 +139,14 @@ exports.update = async(ctx) => {
 
 exports.search = async(ctx) => {
   const { content } = ctx.params;
+  
   const query = content 
-  // $regex: content => 대소문자 가리지않고 검색
-  // $options: 'i' => 제목에 검색 내용이 포함되어있으면 모두 포함
   ? {title : {$regex: content, $options: 'i'}}
   : {};
 
   try {
-    // _id는 default라 false 처리하고, 필요한 데이터인 title만 가져온다.
-    const posts = await Post.find(query, {"_id": false, "title": true})
+    // _id는 default라 [true/false] 처리하고, 필요한 데이터인 title만 가져온다.
+    const posts = await Post.find(query, {"_id": true, "title": true})
       .lean()
       .exec();
     ctx.body = posts;

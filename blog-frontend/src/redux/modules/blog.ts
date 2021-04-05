@@ -70,7 +70,7 @@ export default reducer;
 export const { getPost, getList, addPost, updatePost, deletePost } = createActions(
   {
     GET_POST: (postId: number, mode: string) => ({ postId, mode }),
-    GET_LIST: (page: number, tag: string, search: string) => ({ page, tag, search }),
+    GET_LIST: (page: number, tag: string, search: string, category: string) => ({ page, tag, search, category }),
     ADD_POST: (post: PostReqType) => ({ post }),
     UPDATE_POST: (postId: number, post: PostReqType) => ({ postId, post }),
     DELETE_POST: (postId: number) => ({ postId }),
@@ -91,34 +91,39 @@ interface GetListActionType extends AnyAction {
     page: number,
     tag: string,
     search: string,
+    category: string,
   }
 }
 
 function* getListSaga(action: GetListActionType) {
   try {
     yield put(pending());
-    const { page, tag, search } = action.payload;
-    const response = yield call(BlogService.getList, page, tag, search);
-    const posts: PostResType[] = Array.from(response.data).map(v => {
+    const { page, tag, search, category } = action.payload;
+    const { data, lastpage } = yield call(BlogService.getList, action.payload);
+
+    const posts: PostResType[] = Array.from(data).map(v => {
       const value = Object(v);
-      const post = {
+      const post: PostResType = {
         postId: value._id,
         title: value.title,
         body: value.body,
         tags: value.tags,
         publishedDate: value.publishedDate,
+        updatedDate: value.updatedDate,
+        category: value.category,
       }
       return post;
     })
-    const lastpage = response.headers.lastpage;
     yield put(successList(posts, lastpage));
     yield put(tag
       ? replace(`${tag}`)
       : search
         ? replace(`${search}`)
-        : page !== 1
-          ? replace(`${page}`)
-          : replace("/"));
+        : category
+          ? replace(`${category}`)
+          : page !== 1
+            ? replace(`${page}`)
+            : replace("/"));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
@@ -135,13 +140,15 @@ interface GetPostActionType extends AnyAction {
 function* getPostSaga(action: GetPostActionType) {
   try {
     yield put(pending());
-    const data = yield call(BlogService.getPost, action.payload.postId);
+    const { data } = yield call(BlogService.getPost, action.payload.postId);
     const post: PostResType = {
       postId: data._id,
       title: data.title,
       body: data.body,
       tags: data.tags,
-      publishedDate: data.publishedDate
+      publishedDate: data.publishedDate,
+      updatedDate: data.updatedDate,
+      category: data.category,
     }
     yield put(successPost(post));
     yield put(replace(action.payload.mode === 'edit' ? `/editor?id=${action.payload.postId}` : `/post/${action.payload.postId}`));

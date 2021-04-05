@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import styles from './List.scss';
 import classNames from 'classnames/bind';
 import { PostResType } from 'src/types';
+import icon from 'src/files';
 
 const cx = classNames.bind(styles);
 
@@ -17,11 +18,15 @@ const PostItem: React.FC<PostItemProps> = React.memo(({
 
   return (
     <div className={cx('post-item')}>
+      <div className={cx('category')}>
+        <img src={icon[post!.category]} alt={post!.category} />
+        {/* TODO : tooptip 구현 */}
+      </div>
       <h2>
         <div onClick={() => urlPush(url)}>{post!.title}</div>
       </h2>
       <div className={cx('date')}>{post!.publishedDate}</div>
-      <p>{post!.body}</p>
+      <p className={cx('body')}>{post!.body}</p>
       <div className={cx('tags')}>
         {post!.tags.map((v, i) => <a key={i} href={`/tag/${v}`}>#{String(v)}</a>)}
       </div>
@@ -32,19 +37,20 @@ const PostItem: React.FC<PostItemProps> = React.memo(({
 type ListProps = {
   posts: PostResType[] | null;
   urlPush: (url: string) => void;
+  notFoundList: string;
 }
 
 const List: React.FC<ListProps> = ({
-  posts, urlPush,
+  posts, urlPush, notFoundList
 }) => {
   if (!posts) return <div></div>;
 
   return (
     <div className={cx('list-wrapper')}>
       <div className={cx('post-list')}>
-        {posts.map((post, i) => {
+        {posts.length ? posts.map((post, i) => {
           return <PostItem key={i} post={post} urlPush={urlPush} />
-        })}
+        }) : <div className={cx('not-found-list')}>{notFoundList}</div>}
       </div>
     </div>
   );

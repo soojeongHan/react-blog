@@ -1,10 +1,18 @@
 # Blog Project
 
-### 프로젝트 목적
+## 프로젝트 목적
 
 - 개인적으로 개발하면서 겪은 경험들을 포스트로 작성하여, 경험을 공유하는 블로그를 개발한다.
 
-### 프로젝트 구조
+## 프로젝트 및 블로그 링크
+
+- [**BLOG Link**](https://soojeonghan.com)
+
+- [**Github Link**](https://github.com/soojeongHan/react-blog)
+
+- [**Notion Link**](https://www.notion.so/soojeonghan/Blog-Project-fdb5cacba0e34a319ba447b16e086a4d)
+
+## 프로젝트 구조
 
 - 프로젝트 생성 : `CRA` 기반으로 `react`, `typescript` 적용
 
@@ -12,12 +20,21 @@
     yarn create react-app react-blog --template typescript
     ```
 
+- 핵심 기능 :
+    - 리스트 조회와 포스트 조회 / 작성 / 수정 / 삭제 기능
+    - 검색 기능 (검색 창에 내용 입력)
+    - 카테고리 별 조회 기능 (카테고리 클릭 시)
+    - 태그 별 조회 기능 (태그 클릭 시)
+    - 관리자 로그인 / 로그아웃 기능
+
 - 디렉터리 구조
     - `components` : 리덕스 상태에 연결되지 않은 프레젠테이셔널 컴포넌트들이 있는 디렉터리.
     각 컴포넌트의 스타일도 이 디렉터리에 넣는다.
         - `common` : 페이지 두 개 이상에서 사용하는 컴포넌트를 넣는다.
             - `Header`
-                - 로고와 (로그인) 새 포스트, 수정, 삭제 버튼이 있는 컴포넌트
+                1. 로고와 새 포스트, 수정, 삭제를 할 수 있는 컴포넌트로 넘어가는 링크가 있다.
+                2. 포스트를 검색할 수 있는 컴포넌트
+                3. 포스트의 주제 별로 카테고리를 나눈 컴포넌트
             - `Footer`
                 - 관리자 로그인과 루트 디렉터리로 가는 링크가 있는 컴포넌트
             - `Button`
@@ -70,10 +87,10 @@
             - 포스트를 [작성 / 수정 / 삭제 / 조회] 하는 API 함수
             - 리스트를 조회하는 API 함수
     - `pages` : 라우터에서 사용할 각 페이지 컴포넌트들이 있는 디렉터리.
-        - `location`이나 `match` 를 props로 가져와 필요한 데이터를 컨테이너 컴포넌트를 넘겨준다.
-        - `EditorPage`
-        - `ListPage`
-        - `PostPage`
+        - `location`이나 `match` 등 Router와 관련된 props를 가져와 필요한 데이터를 컨테이너 컴포넌트를 전달한다.
+        - `EditorPage` : Editor 페이지
+        - `ListPage` : List 페이지
+        - `PostPage` : Post 페이지
         - `NotFoundPage` : 404 : Not Found를 나타낼 페이지
     - `redux` : Ducks 구조를 적용시킨 리덕스 모듈들과 스토어 생성 함수가 들어있는 디렉터리.
         - `create.ts`
@@ -81,6 +98,7 @@
         - `modules`
             - `base.ts` : 로그인 / 로그아웃 / 로그인 체크를 실행하는 액션, 리듀서, 스토어가 있는 파일이다.
             - `blog.ts` : 포스트를 [작성 / 수정 / 삭제 / 조회]하고, 리스트를 조회하는 액션, 리듀서, 스토어가 있는 파일이다.
+            - `search.ts` : 포스트를 검색하기 위한 액션, 리듀서, 스토어가 있는 파일이다.
             - `rootReducer.ts` : 여러 리듀서를 결합하여 모듈을 내보낸다.
             - `rootSaga.ts` : 여러 사가 모두 실행시킬 수 있는 `all()` 함수를 사용하고, 모듈화하여 내보낸다.
     - `styles` : 폰트, 색상, 반응형 디자인 도구, 그림자 생성 함수 등 프로젝트에서 전역적으로 필요한 스타일 관련 코드들이 들어있는 디렉터리
@@ -91,40 +109,7 @@
             - `_mixins.scss` : 그림자를 쉽게 설정할 수 있는 marterial-shadow 믹스인
     - `types.ts` : 전역적으로 사용할 `type` 을 선언한 파일
 
-1. List Page
-
-![list-page](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/3ec862d1-1d89-44c4-979c-79da12532907/list.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210304%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210304T070626Z&X-Amz-Expires=86400&X-Amz-Signature=88fe99f121b0f774f061d6eee2df742151b9a45e31d9190437f724e0d37101b5&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22list.png%22)
-
-2. Post Page
-
-![post-page](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/78bbc342-1cc8-4348-93c9-ce87b3208efb/post.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210304%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210304T070708Z&X-Amz-Expires=86400&X-Amz-Signature=f88f7ec344c7ea20680fa78bbff5b5e07d2d20ff93d8b4cc66ebb6ddd1113657&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22post.png%22)
-
-3. Editor Page
-
-![editor-page](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/2f8b1c66-b9bb-47c3-8973-4d1be17bb537/editor.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210304%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210304T070734Z&X-Amz-Expires=86400&X-Amz-Signature=eefd276d4fef9a04245dc6c7993048f4bb12a2191eeff3a368ef1e1e0df82c3e&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22editor.png%22)
-
-4. List Page - Tag
-
-![list-page-tag](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/4c5d0a2d-2095-4c1e-be95-64b81581ab5c/list_tag.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210304%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210304T070744Z&X-Amz-Expires=86400&X-Amz-Signature=b9b1781adc59fef1d754f00af9bf0c57efba2806dd20205c3ad5b4b3a7265fbf&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22list_tag.png%22)
-
-5. Login Modal
-
-![login-modal](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/b482c4b5-c22f-44a3-b4d4-521146fe5b7a/loginModal_2.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210304%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210304T070804Z&X-Amz-Expires=86400&X-Amz-Signature=508cab7879d93f7cc5b280cee46693564f737419cca5edae41fb1f5be804b9e6&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22loginModal_2.png%22)
-
-6. Delete Modal
-
-![delete-modal](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/1ed16954-af87-4c33-a3c7-6222be5fc5c6/deleteModal.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210304%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210304T070821Z&X-Amz-Expires=86400&X-Amz-Signature=d7c248e2ba7a78d785ee7f955eeb5fff493fe14a7204d52994f73ac55b443e10&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22deleteModal.png%22)
-
-
-### 프로젝트 및 블로그 링크
-
-[**BLOG Link**](https://soojeonghan.com)
-
-[**Github Link**](https://github.com/soojeongHan/react-blog)
-
-[**Notion Link**](https://www.notion.so/soojeonghan/Blog-Project-fdb5cacba0e34a319ba447b16e086a4d)
-
-### 라이브러리와 프레임워크
+## 라이브러리와 프레임워크
 
 - Frontend
     - `react^17.0.1` `@types/react^17.0.0` : react 라이브러리

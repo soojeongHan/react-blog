@@ -21,6 +21,7 @@ const Root: React.FC = () => {
             <Route path="/page/:page" component={ListPage} />
             <Route path="/tag/:tag/:page?" component={ListPage} />
             <Route path="/search/:search/:page?" component={ListPage} />
+            <Route path="/category/:category/:page?" component={ListPage} />
             <Route path="/post/:id" component={PostPage} />
             <Route path="/editor" component={EditorPage} />
             <Route path="/editor/:id" component={EditorPage} />

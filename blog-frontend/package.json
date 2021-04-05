@@ -105,6 +105,7 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
+    "finalize": "yarn build && yarn deploy && yarn invalidate",
     "start": "node -r tsconfig-paths/register scripts/start.js",
     "build": "node -r tsconfig-paths/register scripts/build.js",
     "test": "node scripts/test.js",

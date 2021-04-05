@@ -30,7 +30,7 @@ mongoose.connect(NODE_ENV === "DEVELOPMENT" ? MONGO_URI_DEV : MONGO_URI, {
   console.log('connected to mongodb')
 )
 .catch(e => 
-console.error(e)
+  console.error(e)
 );
 
 mongoose.set('useCreateIndex', true);
@@ -68,6 +68,6 @@ if(NODE_ENV === "DEVELOPMENT") {
     cert: fs.readFileSync('/etc/letsencrypt/live/soojeonghan.gq/cert.pem')
   }, app.callback()).listen(port, () => {
     console.log("origin : " + NODE_ENV === "DEVELOPMENT" ? "http://172.18.224.1:3000" : "https://soojeonghan.com");
-    console.log("https server start");
+    console.log("server start");
   });
 }

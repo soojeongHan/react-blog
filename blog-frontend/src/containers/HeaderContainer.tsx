@@ -5,15 +5,16 @@ import { history } from 'src/redux/create';
 import { showModal } from 'src/redux/modules/base';
 import { RootState } from 'src/redux/modules/rootReducer';
 import { debounce } from 'src/hooks/debounce';
-import { searchContent as searchContentSaga, SearchType, hideSearchModal, showSearchModal } from 'src/redux/modules/search';
+import { searchContent as searchContentSaga, SearchType, hideSearchModal, showSearchModal, SearchDataType } from 'src/redux/modules/search';
 import { push } from 'connected-react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 type HeaderContainerProps = {
-
+  search: string | undefined;
 }
 
-const HeaderContainer: React.FC<HeaderContainerProps> = () => {
-
+const HeaderContainer: React.FC<RouteComponentProps<HeaderContainerProps>> = ({ match }) => {
+  const searchPath = match.params.search;
   const dispatch = useDispatch();
 
   const logged = useSelector<RootState, boolean>(state => state.base.logged);
@@ -21,7 +22,8 @@ const HeaderContainer: React.FC<HeaderContainerProps> = () => {
   const postId = isPostPage ? history.location.pathname.split("post/").pop() : "";
 
   const search = useSelector<RootState, SearchType>(state => state.search);
-  const { searchData, searchView }: { searchData: string[] | null, searchView: boolean } = search;
+  const { searchData, searchView }: { searchData: SearchDataType[] | null, searchView: boolean } = search;
+  const [isMenuDisplay, setMenuDisplay] = React.useState<boolean>(false);
 
   const searchInputRef = React.createRef<any>();
   const searchViewRef = React.createRef<any>();
@@ -47,9 +49,13 @@ const HeaderContainer: React.FC<HeaderContainerProps> = () => {
     window.onresize = handleResize;
   }, [searchData, searchViewRef, searchView, handleResize]);
 
+  const toggleMenuDisplay = React.useCallback((bool?: boolean | undefined) => {
+    typeof bool === "boolean" ? setMenuDisplay(bool) : setMenuDisplay(!isMenuDisplay);
+  }, [isMenuDisplay]);
+
   React.useLayoutEffect(() => {
     const hide = () => {
-      dispatch(hideSearchModal());
+      if (searchView) dispatch(hideSearchModal());
     }
 
     document.addEventListener('click', hide);
@@ -59,34 +65,36 @@ const HeaderContainer: React.FC<HeaderContainerProps> = () => {
       hide();
       document.removeEventListener('click', hide);
     }
-  }, [dispatch]);
+  }, [dispatch, searchView]);
 
   const goHomepage = React.useCallback(() => {
     history.location.pathname === "/"
       ? window.location.reload()
       : history.push('/');
   }, []);
-  const goPage = (content: string) => {
+  const goPage = React.useCallback((content: string) => {
     dispatch(push(content));
-    dispatch(hideSearchModal());
-  }
+  }, [dispatch]);
   const handleRemove = React.useCallback(() => {
     dispatch(showModal('remove'));
   }, [dispatch]);
-  const handleChangeSearchInput = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchInput = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value !== "") {
       dispatch(searchContentSaga(e.target.value));
       dispatch(showSearchModal());
     }
     else dispatch(hideSearchModal());
-  }, 250);
+  }, 200);
   const handleSearchAndFocus = () => {
     searchInputRef.current.value === ""
       ? searchInputRef.current.focus()
       : goPage(`/search/${searchInputRef.current.value}`);
   }
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") goPage(`/search/${Object(e.target).value}`);
+    if (e.key === "Enter") {
+      goPage(`/search/${Object(e.target).value}`);
+      dispatch(hideSearchModal());
+    }
   }
 
   return (
@@ -94,18 +102,21 @@ const HeaderContainer: React.FC<HeaderContainerProps> = () => {
       <Header
         goHomepage={goHomepage}
         handleRemove={handleRemove}
-        handleChangeSearchInput={handleChangeSearchInput}
+        handleSearchInput={handleSearchInput}
         handleSearchAndFocus={handleSearchAndFocus}
         handleSearchKeyPress={handleSearchKeyPress}
         goPage={goPage}
+        toggleMenuDisplay={toggleMenuDisplay}
+        isMenuDisplay={isMenuDisplay}
         searchInputRef={searchInputRef}
         searchViewRef={searchViewRef}
         isPostPage={isPostPage}
         postId={postId}
         logged={logged}
-        searchData={searchData} />
+        searchData={searchData}
+        searchPath={searchPath} />
     </React.Fragment>
   );
 }
 
-export default HeaderContainer;
+export default withRouter(HeaderContainer);

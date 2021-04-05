@@ -14,7 +14,7 @@ const Footer: React.FC<FooterProps> = ({ onLoginClick, logged }) => {
   return (
     <footer className={cx('footer')}>
       <Link to="/" className={cx('brand')}>Soo Dev-Blog</Link>
-      <div className={cx('admin-login')} onClick={onLoginClick}>관리자 {logged ? '로그아웃' : '로그인'}</div>
+      <div className={cx('admin-login')} onClick={onLoginClick}>Admin {logged ? 'Logout' : 'Login'}</div>
     </footer>
   );
 }

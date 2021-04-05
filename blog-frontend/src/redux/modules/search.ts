@@ -4,16 +4,21 @@ import { createActions, handleActions } from "redux-actions";
 import { call, put, takeEvery } from "redux-saga/effects";
 import BlogService from "src/service/BlogService";
 
+export type SearchDataType = {
+  postId: string,
+  title: string,
+}
+
 export type SearchType = {
   searchView: boolean,
-  searchData: string[] | null,
+  searchData: SearchDataType[] | null,
   loading: boolean,
   error: boolean,
 }
 
 const initialState: SearchType = {
   searchView: false,
-  searchData: [],
+  searchData: null,
   loading: false,
   error: false,
 }
@@ -87,12 +92,17 @@ interface SearchActionType extends AnyAction {
 
 function* searchContentSaga(action: SearchActionType) {
   try {
-    const response = yield call(BlogService.searchContent, action.payload.content);
-    const data: string[] = Array.from(response).map(v => {
-      return Object(v).title
-    })
-    response.length
-      ? yield put(searchSuccess(data))
+    const { data } = yield call(BlogService.searchContent, action.payload.content);
+    console.log(data);
+    const searchData: SearchDataType[] = Array.from(data).map(v => {
+      const obj = {
+        postId: Object(v)._id,
+        title: Object(v).title
+      };
+      return obj;
+    });
+    searchData.length
+      ? yield put(searchSuccess(searchData))
       : yield put(searchFail());
   }
   catch (error) {

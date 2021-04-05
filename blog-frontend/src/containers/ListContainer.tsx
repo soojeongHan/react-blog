@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PageTemplate from 'src/components/common/PageTemplate';
 import List from 'src/components/list';
@@ -15,19 +15,20 @@ type ListContainerProps = {
   page: number,
   tag?: string,
   search?: string,
+  category?: string,
 }
 
-const ListContainer: React.FC<ListContainerProps> = ({ page, tag, search }) => {
+const ListContainer: React.FC<ListContainerProps> = ({ page, tag, search, category }) => {
   const dispatch = useDispatch();
   const blog = useSelector<RootState, BlogStateType>(state => state.blog);
   const { posts, lastpage: lastPage, loading }: {
     posts: PostResType[] | null, lastpage: number | null, loading: boolean
   } = blog;
 
-  useLayoutEffect(() => {
-    dispatch(getListSaga(page, tag, search));
+  React.useLayoutEffect(() => {
+    dispatch(getListSaga(page, tag, search, category));
     document.documentElement.scrollTop = 0;
-  }, [dispatch, page, tag, search]);
+  }, [dispatch, page, tag, search, category]);
 
   const urlPush = (url: string) => {
     dispatch(push(url));
@@ -40,22 +41,23 @@ const ListContainer: React.FC<ListContainerProps> = ({ page, tag, search }) => {
   const EditedPost = posts
     ? posts.map(tmpPost => {
       const post: PostResType = {
-        postId: tmpPost.postId,
-        title: tmpPost.title,
+        ...tmpPost,
         body: removeMarkdown(tmpPost.body),
         publishedDate: new TimeAgo('ko-KR').format(new Date(tmpPost.publishedDate).getTime()),
-        tags: tmpPost.tags
       }
       return post;
     })
-    : []
+    : [];
+
+  const notFoundListText = !search ? "현재 포스트가 존재하지 않습니다." : "일치하는 포스트를 찾을 수 없습니다.";
 
   if (loading) return <div></div>;
   return (
     <PageTemplate>
       <List
         posts={EditedPost}
-        urlPush={urlPush} />
+        urlPush={urlPush}
+        notFoundList={notFoundListText} />
       <Pagenation
         lastPage={lastPage ? lastPage : 1}
         createPagePath={createPagePath}

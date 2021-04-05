@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './Editor.scss';
 import classNames from 'classnames/bind';
-import Button from 'src/components/common/Button';
 import MDEditor from '@uiw/react-md-editor';
 import { PostReqType, PostResType } from 'src/types';
 import { history } from 'src/redux/create';
+import icon from 'src/files';
 
 const cx = classNames.bind(styles);
 
@@ -25,15 +25,29 @@ const Editor: React.FC<EditorProps> = ({
   const onSubmit = () => {
     const title = titleRef.current?.value;
     const tags = tagsRef.current?.value;
-    if (title === undefined || title === "" ||
-      tags === undefined || tags === "" ||
-      body === undefined || body === "") {
-      alert('빈칸을 채워주세요.')
+    const category = categoryRef.current?.value;
+
+    if (title === undefined || title === "") {
+      alert('제목을 입력해주세요.');
       return;
-    } else {
+    }
+    else if (tags === undefined || tags === "") {
+      alert('태그를 입력해주세요.');
+      return;
+    }
+    else if (body === undefined || body === "") {
+      alert('본문을 입력해주세요.');
+      return;
+    }
+    else if (category === undefined || category === "") {
+      alert('카테고리를 선택해주세요.');
+      return;
+    }
+    else {
       const post: PostReqType = {
         title,
         body,
+        category,
         // "," 문자열 기준으로 배열을 만들어 앞 뒤 공백을 없애고, 공백인 태그와 중복 태그는 제거한다.
         tags: tags === ''
           ? []
@@ -44,33 +58,41 @@ const Editor: React.FC<EditorProps> = ({
       handlePost(post);
     }
   }
-
   const onGoBack = () => {
     history.goBack();
   }
+
   const titleRef = React.useRef<HTMLInputElement>(null);
   const tagsRef = React.useRef<HTMLInputElement>(null);
+  const categoryRef = React.useRef<HTMLSelectElement>(null);
+
+  const categoryOptions = ["Javascript", "Problem Solving", "AWS", "Webpack", "ETC"];
   return (
     <div className={cx('editor-template')} onMouseMove={(e) => handleMouseMove(e)}>
 
       <div className={cx('editor-header')}>
-        <div className={cx('back')}>
-          <Button onClick={onGoBack} theme="outline">뒤로가기</Button>
+        <div className={cx('undo', 'icon')} onClick={onGoBack}>
+          <img src={icon.UndoIcon} alt="UndoIcon" />
         </div>
-        <div className={cx('submit')}>
-          <Button onClick={onSubmit} theme="outline">작성하기</Button>
+        <div className={cx('write', 'icon')} onClick={onSubmit}>
+          <img src={icon.WriteIcon} alt="WriteIcon" />
         </div>
       </div>
 
       <div className={cx('panes')}>
         <div className={cx('pane', 'editor')} style={{ flex: leftPercentage }}>
+
           <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={post?.title} />
           <div className={cx('code-editor')}>
             <MDEditor className={cx('w-md-editor')} value={body} onChange={onChange} preview={'edit'} />
           </div>
-          <div className={cx('tags')}>
+          <div className={cx('info-wrapper')}>
             <div className={cx('description')}>태그</div>
-            <input name="tags" placeholder="태그를 입력하세요 (쉼표로 구분)" ref={tagsRef} defaultValue={post?.tags} />
+            <input className={cx('tags-input')} name="tags" placeholder="태그를 입력하세요(쉼표로 구분)" ref={tagsRef} defaultValue={post?.tags} />
+            <div className={cx('description')}>카테고리</div>
+            <select className={cx('category-select')} ref={categoryRef}>
+              {categoryOptions.map((option, i) => <option key={i + 1} value={option.replace(/(\s*)/g, "")}>{option}</option>)}
+            </select>
           </div>
         </div>
         <div className={cx('pane', 'preview')} style={{ flex: 1 - leftPercentage }}>
