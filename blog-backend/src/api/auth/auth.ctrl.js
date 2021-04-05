@@ -20,7 +20,6 @@ exports.login = async (ctx) => {
 }
 
 exports.check = (ctx) => {
-  console.log("check : ", !!ctx.session.logged);
   ctx.body = {
     logged: !!ctx.session.logged
   };

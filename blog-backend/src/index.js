@@ -34,7 +34,7 @@ mongoose.connect(NODE_ENV === "DEVELOPMENT" ? MONGO_URI_DEV : MONGO_URI, {
 );
 
 mongoose.set('useCreateIndex', true);
-  
+
 const app = new Koa();
 const router = new Router();
 
