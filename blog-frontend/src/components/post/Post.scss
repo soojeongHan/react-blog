@@ -20,6 +20,7 @@
       font-size: 3rem;
       margin: 0;
       word-break: keep-all;
+      text-align: center;
     }
 
     .tags {
@@ -132,6 +133,9 @@
         span[class*="token"] {
           background: #ffffff;
         }
+      }
+      & pre {
+        background-color: #ffffff; 
       }
     }
   }
