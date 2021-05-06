@@ -2,11 +2,11 @@
 
 # dependencies
 blog-frontend/node_modules
-blog-frontend/config
 blog-backend/node_modules
 
 # production
 blog-frontend/build
+blog-backend/log
 
 # misc
 *.env

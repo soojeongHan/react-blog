@@ -23,7 +23,6 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({ children, visible }) => {
   React.useLayoutEffect(() => {
     if (visible) startAnimation();
     return () => {
-      //TODO : cleanup Function
       setAnimate(false);
     }
   }, [visible]);

@@ -65,7 +65,16 @@
       color: #000000;
       border: none;
     }
-    
+  }
+
+  &.confirm {
+    background: #FF475A;
+    &:hover {
+      background: #fc3b4e;
+    }
+    &:active {
+      background: #ff3246;
+    }
   }
 
   & + & {

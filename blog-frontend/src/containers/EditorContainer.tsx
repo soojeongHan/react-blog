@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { Dispatch } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Editor from 'src/components/editor';
 import { PostReqType, PostResType } from 'src/types';
@@ -7,24 +7,38 @@ import { getPost as getPostSaga } from 'src/redux/modules/blog';
 import { updatePost as updatePostSaga } from 'src/redux/modules/blog';
 import { RootState } from 'src/redux/modules/rootReducer';
 
-type EditorContainerProps = {
-  postId: string | undefined,
-  isNewPost: boolean,
+const FetchEditorDataFunction = (postId: string | undefined, dispatch: Dispatch<any>) => {
+  React.useLayoutEffect(() => {
+    dispatch(getPostSaga(postId, "editor"));
+  }, [dispatch, postId]);
+
+  return useSelector<RootState, PostResType | null>(state => state.blog.post);
 }
 
-const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) => {
-  const dispatch = useDispatch();
+const HandleEditorDataFunction = (postData: PostResType | null, dispatch: Dispatch<any>) => {
+  const [editorData, setEditorData] = React.useState<string | undefined>(postData ? postData?.body : undefined);
 
-  useLayoutEffect(() => {
-    if (!isNewPost) dispatch(getPostSaga(postId, "edit"));
-  }, [dispatch, postId, isNewPost]);
+  const handleChangeEditordata = (e: string | undefined) => {
+    setEditorData(e);
+  }
+  const handleWritePost = (post: PostReqType, postId: string | undefined) => {
+    postId
+      // postId가 있으면 업데이트하고,
+      ? dispatch(updatePostSaga(postId, post))
+      // postId가 postId가 
+      : dispatch(addPostSaga(post));
+  }
 
-  const post = useSelector<RootState, PostResType | null>(state => state.blog.post);
-  const [body, setBody] = React.useState<string | undefined>(!isNewPost && post ? post?.body : undefined);
+  return {
+    editorData,
+    handleChangeEditordata, handleWritePost
+  }
+}
+
+const HandleResizeSeparateViewFunction = () => {
   const [leftPercentage, setLeftPercentage] = React.useState<number>(0.5);
   const [isDown, setIsDown] = React.useState<boolean>(false);
 
-  // 에디터와 미리보기의 크기를 조정할 수 있는 기능
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const lp = e.clientX / window.innerWidth;
     if (isDown && lp < 0.75 && lp > 0.25) {
@@ -34,18 +48,33 @@ const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) 
   const handleIsDown = (down: boolean) => {
     setIsDown(down);
   }
-  const onChange = (e: string | undefined) => {
-    setBody(e);
+
+  return {
+    leftPercentage,
+    handleMouseMove, handleIsDown
   }
-  const addPost = (post: PostReqType) => {
-    dispatch(addPostSaga(post));
-  }
-  const updatePost = (post: PostReqType) => {
-    dispatch(updatePostSaga(postId, post));
-  }
+}
+
+type EditorContainerProps = {
+  postId: string | undefined,
+  isNewPost: boolean,
+}
+
+const EditorContainer: React.FC<EditorContainerProps> = ({ postId, isNewPost }) => {
+  const dispatch = useDispatch();
+
+  // postId의 값이 있으면, 서버로부터 Post 데이터를 가져오는 함수
+  const postData: PostResType | null = isNewPost ? null : FetchEditorDataFunction(postId, dispatch);
+  // Editor의 데이터를 저장하고, 서버로 보내는 함수.
+  const { editorData, handleChangeEditordata, handleWritePost } = HandleEditorDataFunction(postData, dispatch);
+  // 에디터와 미리보기의 크기를 조정할 수 있는 함수.
+  const { leftPercentage, handleMouseMove, handleIsDown } = HandleResizeSeparateViewFunction();
 
   return (
-    <Editor onChange={onChange} body={body} handlePost={isNewPost ? addPost : updatePost} post={isNewPost ? null : post} leftPercentage={leftPercentage} handleMouseMove={handleMouseMove} handleIsDown={handleIsDown} />
+    <Editor
+      postData={postData} editorData={editorData} leftPercentage={leftPercentage} postId={postId}
+      handleChangeEditordata={handleChangeEditordata} handleWritePost={handleWritePost} handleMouseMove={handleMouseMove}
+      handleIsDown={handleIsDown} />
   );
 }
 

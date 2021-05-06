@@ -23,11 +23,11 @@ const LoginModal: React.FC<LoginModalProps> = ({
     <ModalWrapper visible={visible}>
       <div className={cx('form')}>
         <div className={cx('close')} onClick={onCancel}>&times;</div>
-        <div className={cx('title')}>로그인</div>
-        <div className={cx('description')}>관리자 비밀번호를 입력하세요.</div>
-        <input autoFocus type="password" placeholder="비밀번호 입력" value={password} onChange={(e) => onChange(e)} onKeyPress={onKeyPress} />
-        {error && <div className={cx('error')}>로그인 실패</div>}
-        <div className={cx('login')} onClick={onLogin}>로그인</div>
+        <div className={cx('title')}>Login</div>
+        <div className={cx('description')}>Enter Admin Password</div>
+        <input autoFocus type="password" placeholder="password" value={password} onChange={(e) => onChange(e)} onKeyPress={onKeyPress} />
+        {error && <div className={cx('error')}>Fail Login</div>}
+        <div className={cx('login')} onClick={onLogin}>Login</div>
       </div>
     </ModalWrapper>
   );

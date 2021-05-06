@@ -1,31 +1,53 @@
-const {ADMIN_PASS: adminPass} = process.env;
-const colours = require('../style');
+const {ADMIN_PASS: adminPass, NODE_ENV} = process.env;
+
+const { generateToken, verifyToken } = require('../../lib/token');
 
 exports.login = async (ctx) => {
   const {password} = ctx.request.body;
+  const freshToken = await generateToken({_id: 'soojeongHan', profile: 'development'});
   if(adminPass === password) {
-    console.log(colours.bg.white, colours.fg.blue, "Success - Login", colours.reset);
+
+    const cookieOptions = Object.assign({
+      maxAge: 1000 * 30 * 60 * 60 * 24 * 3,
+    }, NODE_ENV === 'DEVELOPMENT' ? {} : {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true
+    });
+
+    ctx.cookies.set('access_token', freshToken, cookieOptions);
     ctx.body = {
       success: true
     };
-    ctx.session.logged = true;
-    console.log(ctx.session);
   }
   else {
-    console.log(colours.bg.black, colours.fg.red, "Fail - Login", colours.reset);
     ctx.body = {
       success: false
     };
   }
 }
 
-exports.check = (ctx) => {
-  ctx.body = {
-    logged: !!ctx.session.logged
-  };
+exports.check = async (ctx) => {
+  try {
+    const isCorrectToken = await verifyToken(ctx);
+    ctx.body = {
+      logged: isCorrectToken ? true : false
+    };
+  }
+  catch {
+    ctx.body = {
+      logged: false
+    }    
+  }
+  finally {
+    ctx.status = 200;
+  }
 }
 
 exports.logout = (ctx) => {
-  ctx.session = null;
-  ctx.status = 204; // No Content
+  ctx.cookies.set('access_token', null, {
+    maxAge: 0,
+    httpOnly: true
+  });
+  ctx.status = 204;
 }

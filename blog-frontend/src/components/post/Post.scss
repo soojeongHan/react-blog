@@ -2,7 +2,7 @@
 
 .post-info {
   background: #000000;
-  height: 24rem;
+  height: 20rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,27 +99,31 @@
 }
 
 .post-body {
+  position: relative;
+  margin-top: 64px;
+  display: flex;
+  justify-content: center;
   .paper {
     word-break: break-all;
-    padding: 2rem;
-    padding-top: 2.5rem;
-    padding-bottom: 2.5rem;
+    padding: 2.5rem 2rem;
+    border-radius: .3rem;
     background: $oc-gray-9;
     color: #ffffff;
-    margin: 0 auto;
     min-height: 20rem;
-    width: 60rem;
+    width: 60%;
 
     @include material-shadow(4, 0.5);
 
     @include media("<large") {
-      width: calc(100% - 3rem);
+      width: 70%;
     }
+
     @include media("<medium") {
-      width: calc(100% - 2rem);
+      width: 80%;
     }
+
     @include media("<small") {
-      width: calc(100% - 1rem);
+      width: 90%;
       .wmde-markdown {
         font-size: .8rem;
       }
@@ -139,5 +143,28 @@
       }
     }
   }
-}
+  
+  .post-navigators {
+    font-weight: lighter;
+    padding: 1rem;
+    color: #ffffff;
+    position: absolute;
+    visibility: hidden;
+    
+    .post-navigator-marker {
+      cursor: pointer;
+    }
 
+    @include media("<large") {
+      display: none;
+    }
+  
+    &.fixed {
+      width: 15%;
+      visibility: visible;
+      position: fixed;
+      top: 64px;
+      right: 2.5%;
+    }
+  }
+}

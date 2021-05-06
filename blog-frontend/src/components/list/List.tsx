@@ -20,7 +20,6 @@ const PostItem: React.FC<PostItemProps> = React.memo(({
     <div className={cx('post-item')}>
       <div className={cx('category')}>
         <img src={icon[post!.category]} alt={post!.category} />
-        {/* TODO : tooptip 구현 */}
       </div>
       <h2>
         <div onClick={() => urlPush(url)}>{post!.title}</div>

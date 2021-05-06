@@ -7,42 +7,48 @@ import { SearchDataType } from 'src/redux/modules/search';
 const cx = classNames.bind(styles);
 
 type HeaderType = {
-  goHomepage: () => void;
-  handleRemove: () => void;
-  handleSearchInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSearchAndFocus: () => void;
-  handleSearchKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  goPage: (url: string) => void;
-  toggleMenuDisplay: (bool?: boolean | undefined) => void;
-  isMenuDisplay: boolean;
-  isPostPage: boolean;
-  postId?: string;
-  logged: boolean;
-  searchInputRef: any;
-  searchViewRef: any;
-  searchData: SearchDataType[] | null;
-  searchPath: string | undefined;
+  goHomepage: () => void,
+  goEditorPage: (postId?: string) => void,
+  showRemoveModal: () => void,
+  handleSearchInput: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  handleSearchAndFocus: () => void,
+  handleSearchKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void,
+  goPage: (url: string) => void,
+  toggleMenuDisplay: (bool?: boolean | undefined) => void,
+  handleLoginClick: (e: any) => void,
+  isDisplayCategory: boolean,
+  isPostPage: boolean,
+  postId: string | undefined,
+  logged: boolean,
+  searchInputRef: React.MutableRefObject<HTMLInputElement | null>,
+  searchViewRef: React.MutableRefObject<HTMLDivElement | null>,
+  searchData: SearchDataType[] | null,
+  searchPath: string | undefined,
+  searchView: boolean,
 }
 
 const Header: React.FC<HeaderType> = ({
-  goHomepage, handleRemove, handleSearchInput, handleSearchAndFocus, handleSearchKeyPress, goPage, toggleMenuDisplay,
-  isMenuDisplay, isPostPage, postId, logged, searchInputRef, searchViewRef, searchData, searchPath
+  goHomepage, goEditorPage, showRemoveModal, handleSearchInput, handleSearchAndFocus, handleSearchKeyPress, goPage, toggleMenuDisplay, handleLoginClick,
+  isDisplayCategory, isPostPage, postId, logged, searchInputRef, searchViewRef, searchData, searchPath, searchView
 }) => {
   return (
     <header className={cx('header')}>
       <div className={cx('header-content')}>
+        {/* LOGO */}
         <div className={cx('brand')} onClick={goHomepage}>
           <div className={cx('logo')} />
           <div>Soo Blog</div>
         </div>
 
+        {/* RIGHT 부분에 차지할 요소 */}
         <div className={cx('right')}>
+          {/* CATEGORY */}
           <div className={cx('menu')} onClick={() => toggleMenuDisplay()}>
-            <img className={cx("menu-icon", isMenuDisplay ? "enter" : "leave")} src={icon.MenuIcon} alt="menu" />
-            <div className={cx('menu-list', isMenuDisplay ? "enter" : "leave")}>
+            <img className={cx("menu-icon", isDisplayCategory ? "enter" : "leave")} src={icon.MenuIcon} alt="menu" />
+            <div className={cx('menu-list', isDisplayCategory ? "enter" : "leave")}>
               <ul>
                 {
-                  ["Javascript", "Problem Solving", "AWS", "ETC"].map((v, i) =>
+                  ["JavaScript", "Problem Solving", "AWS", "ETC"].map((v, i) =>
                     <li key={i} onClick={() => goPage(`/category/${v.replace(/(\s*)/g, "")}`)}>{v}</li>
                   )
                 }
@@ -50,31 +56,51 @@ const Header: React.FC<HeaderType> = ({
             </div>
           </div>
 
-          <div className={cx('search-wrapper')}>
-            {(isPostPage && logged) &&
-              <div className={cx('edit', 'logo')} onClick={() => goPage(`/editor?id=${postId}`)}><img src={icon.EditIcon} alt="EditIcon" /></div>
-            }
-            {(isPostPage && logged) &&
-              <div className={cx('remove', 'logo')} onClick={handleRemove}><img src={icon.RemoveIcon} alt="RemoveIcon" /></div>
-            }
-            {logged && <div className={cx('write', 'logo')} onClick={() => goPage('/editor')}><img src={icon.WriteIcon} alt="WriteIcon" /></div>}
-            <div className={cx('search', 'logo')} onClick={handleSearchAndFocus}>
-              <img src={icon.SearchIcon} alt="searchIcon" />
+          {/* CRUD FUNCTION ICON LIST */}
+          {logged &&
+            <div className={cx("post-button-wrapper", logged && "display")}>
+              {isPostPage &&
+                <React.Fragment>
+                  <div className={cx('edit', 'logo')} onClick={() => goEditorPage(postId)}><img src={icon.EditIcon} alt="EditIcon" /></div>
+                  <div className={cx('remove', 'logo')} onClick={showRemoveModal}><img src={icon.RemoveIcon} alt="RemoveIcon" /></div>
+                </React.Fragment>
+              }
+              <div className={cx('write', 'logo')} onClick={() => goEditorPage()}><img src={icon.WriteIcon} alt="WriteIcon" /></div>
             </div>
-            <input
-              className={cx('search-input')}
-              type="search"
-              ref={searchInputRef}
-              onChange={(e) => handleSearchInput(e)}
-              onKeyPress={(e) => handleSearchKeyPress(e)}
-              defaultValue={searchPath} />
-            <div className={cx('search-view')} ref={searchViewRef} >
-              <ul>
-                {searchData && searchData.map((v, i) => <li key={i} onClick={() => goPage(`/post/${v.postId}`)}>{v.title}</li>)}
-              </ul>
+          }
+
+          {/* SEARCH */}
+          <div className={cx('search')}>
+            {/* SEARCH LOGO */}
+            <div className={cx('search', 'logo')} onClick={handleSearchAndFocus}>
+              <img src={icon.SearchIcon} alt="SearchIcon" />
+            </div>
+            {/* SEARCH INPUT */}
+            <div className={cx('search-wrapper')}>
+              <input
+                className={cx('search-input')}
+                type="search"
+                ref={searchInputRef}
+                onChange={(e) => handleSearchInput(e)}
+                onKeyPress={(e) => handleSearchKeyPress(e)}
+                defaultValue={searchPath} />
+              {/* SEARCH RESULT VIEW */}
+              <div className={cx('search-view', searchData && searchView && 'enable')} ref={searchViewRef} >
+                <ul>
+                  {searchData && searchData.map((v, i) =>
+                    <li key={i} onClick={() => goPage(`/post/${v.postId}`)}>
+                      {v.title}
+                    </li>
+                  )}
+                </ul>
+              </div>
             </div>
           </div>
 
+          {/* USER AUTH */}
+          <div className={cx('user', 'logo')} onClick={(e) => handleLoginClick(e)}>
+            <img src={logged ? icon.UserIcon : icon.LoginIcon} alt="UserIcon" />
+          </div>
         </div>
       </div>
     </header>

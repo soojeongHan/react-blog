@@ -27,6 +27,7 @@ const AskRemoveModalContainer: React.FC<RouteComponentProps<AskRemoveModalContai
       console.error(e);
     }
   }
+
   return (
     <AskRemoveModal
       visible={visible}

@@ -16,12 +16,12 @@ const AskRemoveModal: React.FC<AskRemoveModalProps> = ({ visible, onCancel, onCo
   return (
     <ModalWrapper visible={visible}>
       <div className={cx('question')}>
-        <div className={cx('title')}>포스트 삭제</div>
-        <div className={cx('description')}>이 포스트를 삭제하시겠습니까?</div>
+        <div className={cx('title')}>Delete Post</div>
+        <div className={cx('description')}>Are you want to delete this post?</div>
       </div>
       <div className={cx('options')}>
-        <Button theme="gray" onClick={onCancel}>취소</Button>
-        <Button onClick={onConfirm}>삭제</Button>
+        <Button theme="gray" onClick={onCancel}>Cancel</Button>
+        <Button theme="confirm" onClick={onConfirm}>Delete</Button>
       </div>
     </ModalWrapper>
   );

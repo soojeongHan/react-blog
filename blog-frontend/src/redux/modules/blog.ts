@@ -115,15 +115,16 @@ function* getListSaga(action: GetListActionType) {
       return post;
     })
     yield put(successList(posts, lastpage));
-    yield put(tag
-      ? replace(`${tag}`)
+    const url = tag
+      ? `/tag/${tag}/${page}`
       : search
-        ? replace(`${search}`)
+        ? `/search/${search}/${page}`
         : category
-          ? replace(`${category}`)
+          ? `/category/${category}/${page}`
           : page !== 1
-            ? replace(`${page}`)
-            : replace("/"));
+            ? `${page}`
+            : '/';
+    yield put(replace(url));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
@@ -140,7 +141,9 @@ interface GetPostActionType extends AnyAction {
 function* getPostSaga(action: GetPostActionType) {
   try {
     yield put(pending());
-    const { data } = yield call(BlogService.getPost, action.payload.postId);
+    const { postId, mode } = action.payload;
+    const { data } = yield call(BlogService.getPost, postId);
+
     const post: PostResType = {
       postId: data._id,
       title: data.title,
@@ -151,7 +154,7 @@ function* getPostSaga(action: GetPostActionType) {
       category: data.category,
     }
     yield put(successPost(post));
-    yield put(replace(action.payload.mode === 'edit' ? `/editor?id=${action.payload.postId}` : `/post/${action.payload.postId}`));
+    yield put(replace(mode === "editor" ? `/editor?id=${postId}` : `/post/${postId}`));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

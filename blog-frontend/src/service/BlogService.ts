@@ -1,7 +1,7 @@
 import { PostReqType } from 'src/types';
 import axios from './Axios';
 
-const POST_API_URL = `/api/posts`;
+const POST_API_URL = '/api/posts';
 
 export default class BlogService {
   public static async writePost(post: PostReqType) {
@@ -14,15 +14,15 @@ export default class BlogService {
   }
 
   public static async getList({ page, tag, search, category }: { page: number, tag: string, search: string, category: string }) {
-    const { data, headers } = await axios.get(
+    const query =
       tag
-        ? `${POST_API_URL}/?tag=${tag}`
+        ? `/?tag=${tag}&page=${page}`
         : search
-          ? `${POST_API_URL}/?search=${search}`
+          ? `/?search=${search}&page=${page}`
           : category
-            ? `${POST_API_URL}/?category=${category}`
-            : `${POST_API_URL}/?page=${page}`
-    );
+            ? `/?category=${category}&page=${page}`
+            : `/?page=${page}`;
+    const { data, headers } = await axios.get(POST_API_URL + query);
     const lastpage = headers.lastpage;
     return { data, lastpage };
   }

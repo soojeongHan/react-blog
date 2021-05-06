@@ -9,18 +9,19 @@ import icon from 'src/files';
 const cx = classNames.bind(styles);
 
 type EditorProps = {
-  post?: PostResType | null;
-  body: string | undefined,
-  leftPercentage: number;
-
-  handlePost: (post: PostReqType) => void;
-  onChange: (e: string | undefined) => void;
-  handleMouseMove: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  handleIsDown: (down: boolean) => void;
+  postData: PostResType | null,
+  editorData: string | undefined,
+  leftPercentage: number,
+  postId: string | undefined,
+  handleChangeEditordata: (e: string | undefined) => void,
+  handleWritePost: (post: PostReqType, postId: string | undefined) => void,
+  handleMouseMove: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+  handleIsDown: (down: boolean) => void,
 }
 
 const Editor: React.FC<EditorProps> = ({
-  post, onChange, body, handlePost, leftPercentage, handleMouseMove, handleIsDown
+  postData, editorData, leftPercentage, postId,
+  handleChangeEditordata, handleWritePost, handleMouseMove, handleIsDown
 }) => {
   const onSubmit = () => {
     const title = titleRef.current?.value;
@@ -35,7 +36,7 @@ const Editor: React.FC<EditorProps> = ({
       alert('태그를 입력해주세요.');
       return;
     }
-    else if (body === undefined || body === "") {
+    else if (editorData === undefined || editorData === "") {
       alert('본문을 입력해주세요.');
       return;
     }
@@ -46,7 +47,7 @@ const Editor: React.FC<EditorProps> = ({
     else {
       const post: PostReqType = {
         title,
-        body,
+        body: editorData,
         category,
         // "," 문자열 기준으로 배열을 만들어 앞 뒤 공백을 없애고, 공백인 태그와 중복 태그는 제거한다.
         tags: tags === ''
@@ -55,7 +56,7 @@ const Editor: React.FC<EditorProps> = ({
             .map(tag => tag.trim())
             .filter(tag => tag !== "")))
       }
-      handlePost(post);
+      handleWritePost(post, postId);
     }
   }
   const onGoBack = () => {
@@ -66,7 +67,7 @@ const Editor: React.FC<EditorProps> = ({
   const tagsRef = React.useRef<HTMLInputElement>(null);
   const categoryRef = React.useRef<HTMLSelectElement>(null);
 
-  const categoryOptions = ["Javascript", "Problem Solving", "AWS", "Webpack", "ETC"];
+  const categoryOptions = ["JavaScript", "Problem Solving", "AWS", "Webpack", "ETC"];
   return (
     <div className={cx('editor-template')} onMouseMove={(e) => handleMouseMove(e)}>
 
@@ -82,13 +83,13 @@ const Editor: React.FC<EditorProps> = ({
       <div className={cx('panes')}>
         <div className={cx('pane', 'editor')} style={{ flex: leftPercentage }}>
 
-          <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={post?.title} />
+          <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={postData?.title} />
           <div className={cx('code-editor')}>
-            <MDEditor className={cx('w-md-editor')} value={body} onChange={onChange} preview={'edit'} />
+            <MDEditor className={cx('w-md-editor')} value={editorData} onChange={handleChangeEditordata} preview={'edit'} />
           </div>
           <div className={cx('info-wrapper')}>
             <div className={cx('description')}>태그</div>
-            <input className={cx('tags-input')} name="tags" placeholder="태그를 입력하세요(쉼표로 구분)" ref={tagsRef} defaultValue={post?.tags} />
+            <input className={cx('tags-input')} name="tags" placeholder="태그를 입력하세요(쉼표로 구분)" ref={tagsRef} defaultValue={postData?.tags} />
             <div className={cx('description')}>카테고리</div>
             <select className={cx('category-select')} ref={categoryRef}>
               {categoryOptions.map((option, i) => <option key={i + 1} value={option.replace(/(\s*)/g, "")}>{option}</option>)}
@@ -97,7 +98,7 @@ const Editor: React.FC<EditorProps> = ({
         </div>
         <div className={cx('pane', 'preview')} style={{ flex: 1 - leftPercentage }}>
           <div className={cx('code-editor')}>
-            <MDEditor.Markdown source={body || ''} className={cx('w-md-editor')} />
+            <MDEditor.Markdown source={editorData || ''} className={cx('w-md-editor')} />
           </div>
         </div>
         <div

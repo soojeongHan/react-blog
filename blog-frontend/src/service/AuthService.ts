@@ -9,13 +9,12 @@ export default class AuthService {
   }
 
   public static async logout() {
-    const response = await axios.post(`${AUTH_API_URL}/logout`, {})
-      .then(res => res.status === 204 ? true : false);
-    return response;
+    const response = await axios.post(`${AUTH_API_URL}/logout`)
+    return response.status === 204 ? true : false;
   }
 
   public static async checkLogin() {
     const response = await axios.get(`${AUTH_API_URL}/check`);
-    return response.data;
+    return response.data
   }
 }

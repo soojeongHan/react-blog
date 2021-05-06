@@ -1,7 +1,8 @@
 const Post = require("models/post");
 const Joi = require("joi");
-const {ObjectId} = require('mongoose').Types;
-const colours = require('../style');
+const { ObjectId } = require('mongoose').Types;
+const { verifyToken } = require('../../lib/token');
+
 
 exports.isValidObjectId = (ctx,next) => {
   const {id} = ctx.params;
@@ -37,7 +38,6 @@ exports.write = async(ctx) => {
   try {
     await post.save();
     ctx.body = post;
-    console.log(colours.bg.white, colours.fg.black, "Success - Write Post", colours.reset);
   } catch(e) {
     ctx.throw(e, 500);
   }
@@ -47,7 +47,6 @@ exports.list = async(ctx) => {
   
   const page = parseInt(ctx.query.page || 1, 10);
   const { tag, category, search } = ctx.query;
-  
   // tag 존재 유무에 따라 find 함수에 넣을 파라미터
   const query = tag 
     ? {tags : tag}
@@ -57,7 +56,6 @@ exports.list = async(ctx) => {
         : search
           ? {title: {$regex: search, $options: 'i'}}
           : {};
-
       
   if(page < 1) {
     ctx.status = 400;
@@ -82,7 +80,6 @@ exports.list = async(ctx) => {
       lastPage: Math.ceil(postCount/10)
     })
     ctx.body = posts.map(limitBodyLength);
-    console.log(colours.bg.white, colours.fg.black, "Success - List", colours.reset);
   }
   catch(e) {
     ctx.throw(e, 500);
@@ -98,7 +95,6 @@ exports.read = async(ctx) => {
       return;
     }
     ctx.body = post;
-    console.log(colours.bg.white, colours.fg.black, "Success - Read", colours.reset);
   }
   catch(e) {
     ctx.throw(e, 500);
@@ -110,7 +106,6 @@ exports.remove = async(ctx) => {
   try {
     await Post.findByIdAndRemove(id).exec();
     ctx.status = 204;
-    console.log(colours.bg.white, colours.fg.black, "Success - Remove", colours.reset);
   } catch(e) {
     ctx.throw(e, 500);
   }
@@ -131,13 +126,12 @@ exports.update = async(ctx) => {
       return;
     }
     ctx.body = post;
-    console.log(colours.bg.white, colours.fg.black, "Success - Update", colours.reset);
   } catch(e) {
     ctx.throw(e, 500);
   }
 }
 
-exports.search = async(ctx) => {
+exports.search = async (ctx) => {
   const { content } = ctx.params;
   
   const query = content 
@@ -150,17 +144,18 @@ exports.search = async(ctx) => {
       .lean()
       .exec();
     ctx.body = posts;
-    console.log(colours.bg.white, colours.fg.black, "Success Search", colours.reset);
   }
   catch(e) {
     ctx.throw(e, 500);
   }
 }
 
-exports.checkLogin = (ctx, next) => {
-  if(!ctx.session.logged) {
-    ctx.status = 401; // Unauthorized
-    return null;
+exports.checkLogin = async (ctx, next) => {
+  const isCorrectToken = await verifyToken(ctx);
+  if(isCorrectToken) {
+    return next();
   }
-  return next();
+  else {
+    ctx.status = 403;
+  }
 }

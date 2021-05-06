@@ -116,9 +116,9 @@ export default reducer;
 export const { reqLogin, reqLogout, reqCheckLogin } = createActions(
   {
     REQ_LOGIN: (password: string) => ({ password }),
-    REQ_LOGOUT: () => ({}),
-    REQ_CHECK_LOGIN: () => ({}),
   },
+  'REQ_LOGOUT',
+  'REQ_CHECK_LOGIN',
   options
 )
 
@@ -136,8 +136,9 @@ interface LoginActionType extends AnyAction {
 
 function* reqLoginSaga(action: LoginActionType) {
   try {
-    const response = yield call(AuthService.login, action.payload.password);
-    yield response.data.success ? put(loginSuccess()) : put(loginError());
+    const { data } = yield call(AuthService.login, action.payload.password);
+    localStorage.setItem('logged', 'true');
+    yield data.success ? put(loginSuccess()) : put(loginError());
   }
   catch (error) {
     console.error(error);
@@ -152,17 +153,17 @@ function* reqLogoutSaga() {
     yield put(push('/'));
   }
   catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+    throw new Error(error);
   }
 }
 
 function* reqCheckLoginSaga() {
   try {
-    const { logged } = yield call(AuthService.checkLogin);
+    const { logged }: { logged: boolean } = yield call(AuthService.checkLogin);
+    localStorage.setItem('logged', logged ? 'true' : 'false');
     yield put(checkLogin(logged));
   }
   catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+    throw new Error(error);
   }
 }
-

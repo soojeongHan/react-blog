@@ -93,17 +93,15 @@ interface SearchActionType extends AnyAction {
 function* searchContentSaga(action: SearchActionType) {
   try {
     const { data } = yield call(BlogService.searchContent, action.payload.content);
-    console.log(data);
     const searchData: SearchDataType[] = Array.from(data).map(v => {
+      const objectValue = Object(v);
       const obj = {
-        postId: Object(v)._id,
-        title: Object(v).title
+        postId: objectValue._id,
+        title: objectValue.title
       };
       return obj;
     });
-    searchData.length
-      ? yield put(searchSuccess(searchData))
-      : yield put(searchFail());
+    yield put(searchData.length ? searchSuccess(searchData) : searchFail());
   }
   catch (error) {
     console.error(error);

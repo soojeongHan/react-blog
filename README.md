@@ -16,19 +16,20 @@
 
 - [**Notion Link**](https://www.notion.so/soojeonghan/Blog-Project-fdb5cacba0e34a319ba447b16e086a4d)
 
+## 동작 가능한 브라우저
+
+✔️ Chrome, Firefox, Microsoft Edge, Safari - Latest Version
+
+❌ IE, etc...
+
 ## 프로젝트 구조
-
-- 프로젝트 생성 : `CRA` 기반으로 `react`, `typescript` 적용
-
-    ```bash
-    yarn create react-app react-blog --template typescript
-    ```
 
 - 핵심 기능 :
     - 리스트 조회와 포스트 조회 / 작성 / 수정 / 삭제 기능
-    - 검색 기능 (검색 창에 내용 입력)
-    - 카테고리 별 조회 기능 (카테고리 클릭 시)
-    - 태그 별 조회 기능 (태그 클릭 시)
+    - 검색 기능
+    - 카테고리 별 조회 기능
+    - 태그 별 조회 기능
+    - 포스트의 제목을 리스트로 출력 및 이동 기능
     - 관리자 로그인 / 로그아웃 기능
 
 - 디렉터리 구조
@@ -39,10 +40,11 @@
                 1. 로고와 새 포스트, 수정, 삭제를 할 수 있는 컴포넌트로 넘어가는 링크가 있다.
                 2. 포스트를 검색할 수 있는 컴포넌트
                 3. 포스트의 주제 별로 카테고리를 나눈 컴포넌트
+                4. 관리자 로그인 / 로그아웃
             - `Footer`
-                - 관리자 로그인과 루트 디렉터리로 가는 링크가 있는 컴포넌트
+                - 루트 디렉터리로 가는 링크가 있는 컴포넌트
             - `Button`
-                - 컴포넌트에 들어오는 변수에 따라, Link와 Div를 만들어 공통적으로 사용하는 버튼 컴포넌트
+                - 공통적으로 사용하는 버튼 컴포넌트
             - `PageTamplate`
                 - `HeaderContainer`를 상단에,  `FooterContainer`를 하단에 두고,
                 중앙에 `main` 태그로 `children` 감싸는 컴포넌트
@@ -64,6 +66,7 @@
         - `PostContainer`
             1. 컴포넌트가 마운트될 때, Id를 기반으로 서버로부터 Post 데이터를 조회.
             2. Post 데이터를 Post 컴포넌트에 넘기고, `AskRemoveModalContainer` 와 함께 렌더링.
+            3. Post의 제목들을 리스트로 출력하여 이동할 수 있는 기능.
         - `EditorContainer`
             1. 컴포넌트가 마운트될 때, 새로운 포스트를 작성하는 것이면 그대로 렌더링하고, 기존 포스트를 수정하는 것이면 서버로부터 Post 데이터를 에디터에 삽입.
             2. 에디터와 미리보기의 크기를 조정할 수 있도록 함수를 구현.
@@ -73,19 +76,19 @@
             루트 디렉터리에서 로고를 누르면, 새로고침 처리된다.
             3. 검색을 할 수 있는 창과 검색에 따른 결과를 보여주는 뷰를 구현.
             4. 주제 별 카테고리 창을 보여주는 뷰를 구현.
+            5. 관리자 로그인 / 로그아웃 할 수 있는 버튼.
         - `FooterContainer`
-            1. 관리자 로그인/로그아웃 할 수 있는 버튼.
-            2. 루트 디렉터리로 돌아가는 버튼.
+            1. 루트 디렉터리로 돌아가는 버튼.
         - `AskRemoveModalContainer`
             - `PostPage` 에서 `삭제` 버튼을 누르면 디스패치를 통해서 redux의 modal 상태를 변화시키고, 해당 값을 이용하여 modal 창을 활성화/비활성화.
             - modal 창에서 `삭제` 버튼을 누르면, 서버에 `axios.delete` 와 `ID`를 보내서 포스트를 삭제.
         - `LoginModalContainer`
             - `ListPage` 또는 `PostPage` 에서 관리자 로그인 버튼을 누르면, 해당 컴포넌트가 활성화.
             - 서버로 비밀번호를 보내 일치하면 로그인 처리를 하고, 불일치하면 경고 메세지를 출력.
-    - `files` : 이미지와 같은 파일들을 모아놓은 디렉터리.
+    - `files` : 이미지 등 파일들을 모아놓은 디렉터리.
     - `service` : 백엔드 API 함수들이 있는 디렉터리.
         - `Axios.ts`
-            - 공통적으로 사용할 axios 객체를 만들어내서, AuthService, BlogService에서 사용할 객체를 export.
+            - 공통적으로 사용할 axios 객체를 만들어내서, AuthService, BlogService에서 사용할 객체를 생성.
             - axios 설정으로는 쿠키를 허용하고, CORS 관련 설정.
         - `AuthService.ts`
             - 로그인 / 로그아웃 / 로그인 상태를 체크하는 API 함수
@@ -125,46 +128,39 @@
                 - `index.js` : router를 통해 post와 관련된 기능을 실행하는 코드.
 
             `index.js` : router를 통해 auth Directory와 posts Directory를 실행하는 코드.
-
+        - lib
+            - `token.js` : JWT Token을 생성 및 디코딩 그리고 확인하는 코드.
         - models
             - `post.js` : MongoDB 스키마 설정 파일
         - `index.js`  : db 연결과 koa library, router, cors를 설정하고, 서버를 구동시키는 코드.
-    - `.env` : 포트와 MongoDB의 정보, 비밀번호, 쿠키 로그인 키 등 민감한 정보를 담은 환경설정 파일
+    - `.env` : 포트와 MongoDB의 정보, 비밀번호, JWT Secret Key 등 민감한 정보를 담은 환경설정 파일
 - 화면 구조
     - Header
-        ![header](https://user-images.githubusercontent.com/49259666/113547736-6f4bdb80-9629-11eb-90ba-2fd5d1d2c50b.JPG)
-
-        - Create, Remove, Update
-
-            ![CRU](https://user-images.githubusercontent.com/49259666/113548134-fac56c80-9629-11eb-8b4d-3febe8f3dd1c.JPG)
+        ![header](https://user-images.githubusercontent.com/49259666/118227502-9d8fc700-b4c3-11eb-9d27-c51a5a99270a.png)
 
     - List
 
-        ![list](https://user-images.githubusercontent.com/49259666/113547800-7ffc5180-9629-11eb-81a0-b87ce3c5d502.jpg)
+        ![list](https://user-images.githubusercontent.com/49259666/118227578-bbf5c280-b4c3-11eb-9584-62d668e7647d.png)
 
     - Editor
 
         ![editor](https://user-images.githubusercontent.com/49259666/113547811-81c61500-9629-11eb-81e5-96ca73282e5b.jpg)
 
     - Post
-        ![post](https://user-images.githubusercontent.com/49259666/113547805-812d7e80-9629-11eb-9713-ea6499619fea.JPG)
+        ![post](https://user-images.githubusercontent.com/49259666/118227683-ec3d6100-b4c3-11eb-882c-ff46a7359bae.png)
 
     - Search & Category
 
         ![search category](https://user-images.githubusercontent.com/49259666/113547809-812d7e80-9629-11eb-8686-8dad6ae31d4b.JPG)
 
-    - Footer : Login / Logout
-
-        ![footer](https://user-images.githubusercontent.com/49259666/113547836-8985b980-9629-11eb-8490-cc0b513f50a0.JPG)
-
     - Modal
         - Login Modal
 
-            ![login](https://user-images.githubusercontent.com/49259666/113548000-c782dd80-9629-11eb-9d6f-4bfeedce6534.JPG)
+            ![login](https://user-images.githubusercontent.com/49259666/118227579-bd26ef80-b4c3-11eb-813c-17a45659c4e8.png)
 
         - Remove Modal
 
-            ![remove](https://user-images.githubusercontent.com/49259666/113548001-c81b7400-9629-11eb-9880-f57aaa013bd8.JPG)
+            ![remove](https://user-images.githubusercontent.com/49259666/118228168-b351bc00-b4c4-11eb-8ba1-31c2093b05e8.png)
 
 
 ## 라이브러리와 프레임워크
