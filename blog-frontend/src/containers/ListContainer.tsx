@@ -1,53 +1,56 @@
 import React, { Dispatch } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import TimeAgo from 'javascript-time-ago';
+import ko from 'javascript-time-ago/locale/ko';
+import removeMarkdown from 'remove-markdown';
+
+import { PostResType } from 'src/types';
 import PageTemplate from 'src/components/common/PageTemplate';
 import List from 'src/components/list';
 import { BlogStateType, getList as getListSaga } from 'src/redux/modules/blog'
 import { RootState } from 'src/redux/modules/rootReducer';
-import { PostResType } from 'src/types';
-import TimeAgo from 'javascript-time-ago';
-import ko from 'javascript-time-ago/locale/ko';
-import removeMarkdown from 'remove-markdown';
-import { push } from 'connected-react-router';
-import Pagenation from 'src/components/list/Pagenation';
+import Meta from 'src/components/common/Meta/Meta';
+import Scroll from 'src/components/list/Scroll';
 
-type ListContainerProps = {
-  page: number,
-  tag?: string,
-  search?: string,
-  category?: string,
-}
 
 const FetchListDataFunction = (
   dispatch: Dispatch<any>,
-  { page, tag, search, category }: ListContainerProps
+  query: any,
+  posts: PostResType[] | null,
+  lastPage: number | null,
 ) => {
-  const blog = useSelector<RootState, BlogStateType>(state => state.blog);
-  const { posts, lastpage: lastPage, loading }: {
-    posts: PostResType[] | null, lastpage: number | null, loading: boolean
-  } = blog;
+  const [page, setPage] = React.useState(Math.ceil((posts?.length || 10) / 10));
+  const latestQuery = React.useRef(query);
 
-  React.useLayoutEffect(() => {
-    dispatch(getListSaga(page, tag, search, category));
-    document.documentElement.scrollTop = 0;
-  }, [dispatch, page, tag, search, category]);
+  React.useEffect(() => {
+    const fetchData = () => {
+      if (latestQuery.current !== query) {
+        setPage(1);
+        dispatch(getListSaga(query, page));
+        latestQuery.current = query;
+      }
+      else dispatch(getListSaga(query, page));
+    }
+    fetchData();
+  }, [dispatch, query, page]);
 
-  const urlPush = (url: string) => {
-    dispatch(push(url));
-  }
+  const fetchMoreTriggerRef = React.useRef<HTMLDivElement>(null);
 
-  const handlePageNumber = (page: number) => {
-    const url = tag
-      ? `/tag/${tag}/${page}`
-      : search
-        ? `/search/${search}/${page}`
-        : category
-          ? `/category/${category}/${page}`
-          : page !== 1
-            ? `page/${page}`
-            : '/';
-    urlPush(url);
-  }
+  React.useEffect(() => {
+    let observer: IntersectionObserver | undefined;
+    if (fetchMoreTriggerRef?.current) {
+      observer = new IntersectionObserver(([{ isIntersecting }]) => {
+        if (isIntersecting)
+          setPage((prevPage) =>
+            prevPage < (lastPage || -1)
+              ? prevPage + 1
+              : prevPage
+          );
+      });
+      observer.observe(fetchMoreTriggerRef.current);
+    }
+    return () => observer && observer.disconnect();
+  }, [fetchMoreTriggerRef, lastPage]);
 
   TimeAgo.addLocale(ko);
   const EditedPost = posts
@@ -61,31 +64,37 @@ const FetchListDataFunction = (
     })
     : [];
 
-  const notFoundListText = !search ? "현재 포스트가 존재하지 않습니다." : "일치하는 포스트를 찾을 수 없습니다.";
+  const notFoundListText = query.search && !EditedPost.length
+    ? "일치하는 포스트를 찾을 수 없습니다."
+    : null;
 
   return {
-    loading, EditedPost, notFoundListText, lastPage, page,
-    urlPush, handlePageNumber
+    EditedPost, notFoundListText, fetchMoreTriggerRef,
   }
 }
 
-const ListContainer: React.FC<ListContainerProps> = (props) => {
+type ListContainerProps = {
+  query: any
+}
+
+const ListContainer: React.FC<ListContainerProps> = ({ query }) => {
   const dispatch = useDispatch();
   // 서버로부터 데이터를 가져와서 필요한 데이터를 처리한다.
-  const { loading, EditedPost, notFoundListText, lastPage, page,
-    urlPush, handlePageNumber } = FetchListDataFunction(dispatch, { ...props });
+  const { posts, lastpage: lastPage = 1, loading } = useSelector<RootState, BlogStateType>(state => state.blog);
+  const { EditedPost, notFoundListText, fetchMoreTriggerRef } = FetchListDataFunction(dispatch, query, posts, lastPage);
 
-  if (loading) return <div></div>;
+  const metaData = {
+    title: 'Soo Blog',
+    description: 'Web Frontend IT 개발 블로그'
+  }
   return (
     <PageTemplate>
+      <Meta data={metaData} />
       <List
         posts={EditedPost}
-        urlPush={urlPush}
-        notFoundList={notFoundListText} />
-      <Pagenation
-        lastPage={lastPage ? lastPage : 1}
-        handlePageNumber={handlePageNumber}
-        page={page} />
+        notFoundList={notFoundListText}
+        loading={loading} />
+      <Scroll ref={fetchMoreTriggerRef} />
     </PageTemplate>
   );
 }

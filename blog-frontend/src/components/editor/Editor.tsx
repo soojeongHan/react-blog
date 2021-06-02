@@ -50,11 +50,9 @@ const Editor: React.FC<EditorProps> = ({
         body: editorData,
         category,
         // "," 문자열 기준으로 배열을 만들어 앞 뒤 공백을 없애고, 공백인 태그와 중복 태그는 제거한다.
-        tags: tags === ''
-          ? []
-          : Array.from(new Set(tags.split(",")
-            .map(tag => tag.trim())
-            .filter(tag => tag !== "")))
+        tags: Array.from(new Set(tags.split(",")
+          .map(tag => tag.trim())
+          .filter(tag => tag !== "")))
       }
       handleWritePost(post, postId);
     }
@@ -70,7 +68,7 @@ const Editor: React.FC<EditorProps> = ({
   const categoryOptions = ["JavaScript", "Problem Solving", "AWS", "Webpack", "ETC"];
   return (
     <div className={cx('editor-template')} onMouseMove={(e) => handleMouseMove(e)}>
-
+      {/* HEADER */}
       <div className={cx('editor-header')}>
         <div className={cx('undo', 'icon')} onClick={onGoBack}>
           <img src={icon.UndoIcon} alt="UndoIcon" />
@@ -80,9 +78,10 @@ const Editor: React.FC<EditorProps> = ({
         </div>
       </div>
 
+      {/* MAIN */}
       <div className={cx('panes')}>
+        {/* EDITOR */}
         <div className={cx('pane', 'editor')} style={{ flex: leftPercentage }}>
-
           <input className={cx('title-input')} placeholder="제목을 입력하세요" name="title" ref={titleRef} defaultValue={postData?.title} />
           <div className={cx('code-editor')}>
             <MDEditor className={cx('w-md-editor')} value={editorData} onChange={handleChangeEditordata} preview={'edit'} />
@@ -96,11 +95,15 @@ const Editor: React.FC<EditorProps> = ({
             </select>
           </div>
         </div>
+
+        {/* PREVIEW */}
         <div className={cx('pane', 'preview')} style={{ flex: 1 - leftPercentage }}>
           <div className={cx('code-editor')}>
             <MDEditor.Markdown source={editorData || ''} className={cx('w-md-editor')} />
           </div>
         </div>
+
+        {/* EDITOR & PREVIEW SEPERATOR */}
         <div
           className={cx('seperator')}
           style={{ left: `${leftPercentage * 100}%` }}

@@ -75,7 +75,7 @@ export default reducer;
 
 export const { searchContent } = createActions(
   {
-    SEARCH_CONTENT: (content: string) => ({ content }),
+    SEARCH_CONTENT: (search: string) => ({ search }),
   },
   options
 )
@@ -86,19 +86,18 @@ export function* sagas() {
 
 interface SearchActionType extends AnyAction {
   payload: {
-    content: string,
+    search: string,
   }
 }
 
 function* searchContentSaga(action: SearchActionType) {
   try {
-    const { data } = yield call(BlogService.searchContent, action.payload.content);
-    const searchData: SearchDataType[] = Array.from(data).map(v => {
-      const objectValue = Object(v);
+    const { data } = yield call(BlogService.getSearch, action.payload.search);
+    const searchData: SearchDataType[] = Array.from(data).map((v: any) => {
       const obj = {
-        postId: objectValue._id,
-        title: objectValue.title
-      };
+        postId: v._id,
+        title: v.title
+      }
       return obj;
     });
     yield put(searchData.length ? searchSuccess(searchData) : searchFail());

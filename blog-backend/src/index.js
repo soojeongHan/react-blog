@@ -8,6 +8,7 @@ const bodyParser = require('koa-bodyparser');
 const cors = require("@koa/cors");
 const mongoose = require("mongoose");
 const logger = require('koa-logging-middleware');
+const ipFilter = require('koa-ip-filter');
 
 const api = require("./api");
 const { jwtMiddleware } = require('lib/token'); // jwt 미들웨어
@@ -47,6 +48,11 @@ app
   exposeHeaders: 'lastpage, access_token',
   credentials: true,
 }))
+.use(ipFilter({
+  id: ['45.146.164.125', '13.82.198.192'],
+  forbidden: '403: Get out of here!',
+  strict: NODE_ENV === "DEVELOPMENT" ? false : true,
+}))
 .use(router.routes())
 .use(router.allowedMethods())
 
@@ -54,7 +60,7 @@ router.use('/api', api.routes());
 
 if(NODE_ENV === "DEVELOPMENT") {
   app.listen(port, () => {
-    console.log(`http://localhost:${port}/`)
+    console.log(`http://localhost:${port}/`);
   })
 } 
 else { 

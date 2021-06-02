@@ -1,0 +1,32 @@
+@import '../../styles/lib/utils';
+
+.pagenation {
+  width: 1024px;
+  margin: 0 auto;
+
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  @include media("<wide") {
+    width: 768px;
+  }
+  @include media("<large") {
+    width: 512px;
+  }
+  @include media("<medium") {
+    width: 100%;
+  }
+  
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  
+  .number {
+    font-size: 0.85rem;
+    text-align: center;
+    color: #ffffff;
+    flex: 1;
+  }
+}

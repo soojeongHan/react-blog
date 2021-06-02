@@ -46,7 +46,9 @@ exports.write = async(ctx) => {
 exports.list = async(ctx) => {
   
   const page = parseInt(ctx.query.page || 1, 10);
+  
   const { tag, category, search } = ctx.query;
+  console.log(tag, category, search);
   // tag 존재 유무에 따라 find 함수에 넣을 파라미터
   const query = tag 
     ? {tags : tag}
@@ -69,7 +71,8 @@ exports.list = async(ctx) => {
       .skip((page-1) * 10)
       .lean()
       .exec();
-    const postCount = await Post.countDocuments().exec();
+    const postCount = await Post.countDocuments(query).exec();
+    
     const limitBodyLength = post => ({
       ...post,
       body: post.body.length < 200
@@ -132,10 +135,10 @@ exports.update = async(ctx) => {
 }
 
 exports.search = async (ctx) => {
-  const { content } = ctx.params;
+  const { search } = ctx.query;
   
-  const query = content 
-  ? {title : {$regex: content, $options: 'i'}}
+  const query = search 
+  ? {title : {$regex: search, $options: 'i'}}
   : {};
 
   try {

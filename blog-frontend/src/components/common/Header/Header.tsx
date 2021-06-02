@@ -3,6 +3,7 @@ import styles from './Header.scss';
 import classNames from 'classnames';
 import icon from 'src/files';
 import { SearchDataType } from 'src/redux/modules/search';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -17,7 +18,6 @@ type HeaderType = {
   toggleMenuDisplay: (bool?: boolean | undefined) => void,
   handleLoginClick: (e: any) => void,
   isDisplayCategory: boolean,
-  isPostPage: boolean,
   postId: string | undefined,
   logged: boolean,
   searchInputRef: React.MutableRefObject<HTMLInputElement | null>,
@@ -25,11 +25,12 @@ type HeaderType = {
   searchData: SearchDataType[] | null,
   searchPath: string | undefined,
   searchView: boolean,
+  page: number,
 }
 
 const Header: React.FC<HeaderType> = ({
   goHomepage, goEditorPage, showRemoveModal, handleSearchInput, handleSearchAndFocus, handleSearchKeyPress, goPage, toggleMenuDisplay, handleLoginClick,
-  isDisplayCategory, isPostPage, postId, logged, searchInputRef, searchViewRef, searchData, searchPath, searchView
+  isDisplayCategory, postId, logged, searchInputRef, searchViewRef, searchData, searchPath, searchView, page
 }) => {
   return (
     <header className={cx('header')}>
@@ -49,7 +50,11 @@ const Header: React.FC<HeaderType> = ({
               <ul>
                 {
                   ["JavaScript", "Problem Solving", "AWS", "ETC"].map((v, i) =>
-                    <li key={i} onClick={() => goPage(`/category/${v.replace(/(\s*)/g, "")}`)}>{v}</li>
+                    <li key={i}>
+                      <Link to={`/category/${v.replace(/(\s*)/g, "")}`}>
+                        {v}
+                      </Link>
+                    </li>
                   )
                 }
               </ul>
@@ -59,11 +64,12 @@ const Header: React.FC<HeaderType> = ({
           {/* CRUD FUNCTION ICON LIST */}
           {logged &&
             <div className={cx("post-button-wrapper", logged && "display")}>
-              {isPostPage &&
-                <React.Fragment>
+              {postId &&
+                <>
                   <div className={cx('edit', 'logo')} onClick={() => goEditorPage(postId)}><img src={icon.EditIcon} alt="EditIcon" /></div>
+
                   <div className={cx('remove', 'logo')} onClick={showRemoveModal}><img src={icon.RemoveIcon} alt="RemoveIcon" /></div>
-                </React.Fragment>
+                </>
               }
               <div className={cx('write', 'logo')} onClick={() => goEditorPage()}><img src={icon.WriteIcon} alt="WriteIcon" /></div>
             </div>

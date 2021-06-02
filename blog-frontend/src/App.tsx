@@ -1,15 +1,18 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import create from 'src/redux/create';
 import { Switch, Route } from 'react-router-dom';
-import EditorPage from 'src/pages/EditorPage';
-import ListPage from 'src/pages/ListPage';
-import PostPage from 'src/pages/PostPage';
-import NotFoundPage from 'src/pages/NotFoundPage';
-import { history } from 'src/redux/create';
+import { BrowserRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
+import loadble from '@loadable/component';
+
+import create from 'src/redux/create';
+import { history } from 'src/redux/create';
 import Base from 'src/components/common/Base';
+
+const Editor = loadble(() => import(/* webpackChunkName: "Header" */ 'src/pages/EditorPage'));
+const List = loadble(() => import(/* webpackChunkName: "List" */ 'src/pages/ListPage'));
+const Post = loadble(() => import(/* webpackChunkName: "Post" */ 'src/pages/PostPage'));
+const Error = loadble(() => import(/* webpackChunkName: "Error" */ 'src/pages/ErrorPage'));
 
 const store = create();
 const Root: React.FC = () => {
@@ -19,14 +22,14 @@ const Root: React.FC = () => {
         <ConnectedRouter history={history}>
           <Switch>
             <Route
-              path={["/page/:page?", "/tag/:tag/:page?", "/search/:search/:page?",
-                "/category/:category/:page?"]}
-              component={ListPage} />
-            <Route path="/post/:id" component={PostPage} />
-            <Route path="/editor" component={EditorPage} />
-            <Route path="/editor/:id" component={EditorPage} />
-            <Route exact path="/" component={ListPage} />
-            <Route component={NotFoundPage} />
+              path={["/tag/:tag", "/search/:search",
+                "/category/:category"]}
+              component={List} />
+            <Route path="/post/:id" component={Post} />
+            <Route path="/editor" component={Editor} />
+            <Route path="/editor/:id" component={Editor} />
+            <Route exact path="/" component={List} />
+            <Route component={Error} />
           </Switch>
           <Base />
         </ConnectedRouter>

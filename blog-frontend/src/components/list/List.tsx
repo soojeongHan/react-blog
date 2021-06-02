@@ -3,16 +3,17 @@ import styles from './List.scss';
 import classNames from 'classnames/bind';
 import { PostResType } from 'src/types';
 import icon from 'src/files';
+import { Link } from 'react-router-dom';
+import FakeList from './FakeList';
 
 const cx = classNames.bind(styles);
 
 type PostItemProps = {
   post: PropsWithChildren<PostResType> | null;
-  urlPush: (url: string) => void;
 }
 
 const PostItem: React.FC<PostItemProps> = React.memo(({
-  post, urlPush,
+  post
 }) => {
   const url: string = `/post/${post!.postId}`;
 
@@ -21,35 +22,38 @@ const PostItem: React.FC<PostItemProps> = React.memo(({
       <div className={cx('category')}>
         <img src={icon[post!.category]} alt={post!.category} />
       </div>
-      <h2>
-        <div onClick={() => urlPush(url)}>{post!.title}</div>
-      </h2>
+      <div className={cx('title')}>
+        <Link className={cx('title-link')} to={url}>{post!.title}</Link>
+      </div>
       <div className={cx('date')}>{post!.publishedDate}</div>
       <p className={cx('body')}>{post!.body}</p>
       <div className={cx('tags')}>
-        {post!.tags.map((v, i) => <a key={i} href={`/tag/${v}`}>#{String(v)}</a>)}
+        {post!.tags.map((v, i) => <Link key={i} to={`/tag/${v}`}>#{String(v)}</Link>)}
       </div>
     </div>
   );
 })
 
 type ListProps = {
-  posts: PostResType[] | null;
-  urlPush: (url: string) => void;
-  notFoundList: string;
+  posts: PostResType[] | null,
+  notFoundList: string | null,
+  loading: boolean,
 }
 
 const List: React.FC<ListProps> = ({
-  posts, urlPush, notFoundList
+  posts, loading, notFoundList
 }) => {
-  if (!posts) return <div></div>;
+  if (loading)
+    return <FakeList postsLength={posts?.length || 10} />
 
   return (
     <div className={cx('list-wrapper')}>
       <div className={cx('post-list')}>
-        {posts.length ? posts.map((post, i) => {
-          return <PostItem key={i} post={post} urlPush={urlPush} />
-        }) : <div className={cx('not-found-list')}>{notFoundList}</div>}
+        {!loading && notFoundList
+          ? <div className={cx('not-found-list')}>{notFoundList}</div>
+          : posts?.map((post, i) => {
+            return <PostItem key={i} post={post} />
+          })}
       </div>
     </div>
   );

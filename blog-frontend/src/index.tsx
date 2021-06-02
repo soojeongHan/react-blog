@@ -1,14 +1,18 @@
 import "react-app-polyfill/ie11";
+import "react-app-polyfill/ie9";
 import "react-app-polyfill/stable";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from 'src/reportWebVitals';
 import App from 'src/App';
 import 'src/styles/base.scss';
+import { HelmetProvider } from 'react-helmet-async';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

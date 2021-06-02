@@ -5,14 +5,10 @@ import { debounce } from 'src/hooks/debounce';
 import { searchContent as searchContentSaga, SearchType, hideSearchModal, showSearchModal, SearchDataType } from 'src/redux/modules/search';
 import { push } from 'connected-react-router';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { history } from 'src/redux/create';
 import { hideModal, initializeLoginModal, reqLogout, showModal } from 'src/redux/modules/base';
 import { RootState } from 'src/redux/modules/rootReducer';
 
-const HandleSearchFunction = (dispatch: Dispatch<any>, url: string, goPage: (content: string) => void) => {
-  const isPostPage = url !== "/" && url.includes('post');
-  const postId = isPostPage ? url.split("post/").pop() : "";
-
+const HandleSearchFunction = (dispatch: Dispatch<any>, goPage: (content: string) => void) => {
   const search = useSelector<RootState, SearchType>(state => state.search);
   const { searchData, searchView }: { searchData: SearchDataType[] | null, searchView: boolean } = search;
   const searchInputRef = React.useRef<HTMLInputElement>(null);
@@ -37,11 +33,13 @@ const HandleSearchFunction = (dispatch: Dispatch<any>, url: string, goPage: (con
     }
     else dispatch(hideSearchModal());
   }, 200);
+
   const handleSearchAndFocus = React.useCallback(() => {
     searchInputRef?.current?.value === ""
       ? searchInputRef.current.focus()
       : goPage(`/search/${searchInputRef?.current?.value}`);
   }, [goPage, searchInputRef]);
+
   const handleSearchKeyPress = React.useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       goPage(`/search/${Object(e.target).value}`);
@@ -50,7 +48,7 @@ const HandleSearchFunction = (dispatch: Dispatch<any>, url: string, goPage: (con
   }, [dispatch, goPage]);
 
   return {
-    searchInputRef, searchViewRef, isPostPage, postId, searchData, searchView,
+    searchInputRef, searchViewRef, searchData, searchView,
     goPage, handleSearchInput, handleSearchAndFocus, handleSearchKeyPress
   };
 }
@@ -69,7 +67,7 @@ const HandleCategoryFunction = () => {
 
 const HandlePostDataFunction = (dispatch: Dispatch<any>, goPage: (content: string) => void) => {
   const goEditorPage = (postId?: string | undefined) => {
-    goPage(`/editor${(postId ? `?id=${postId}` : "")}`);
+    goPage(`/editor${(postId ? `?id=${postId}` : '')}`);
   }
   const showRemoveModal = React.useCallback(() => {
     dispatch(showModal('remove'));
@@ -119,10 +117,12 @@ const AuthenticationFunction = (dispatch: Dispatch<any>) => {
 }
 
 type HeaderContainerProps = {
-  search: string | undefined,
+  id?: string,
+  search?: string
 }
 
-const HeaderContainer: React.FC<RouteComponentProps<HeaderContainerProps>> = ({ match }) => {
+const HeaderContainer: React.FC<RouteComponentProps<HeaderContainerProps>> = ({ match, location }) => {
+  const { id, search } = match.params;
   const dispatch = useDispatch();
 
   // 인자로 받은 URL 주소의 값으로 페이지를 이동한다.
@@ -131,15 +131,16 @@ const HeaderContainer: React.FC<RouteComponentProps<HeaderContainerProps>> = ({ 
   }, [dispatch]);
   // Brand Icon을 누르면, 홈페이지로 돌아가거나, 홈페이지면 새로고침을 하는 함수.
   const goHomepage = React.useCallback(() => {
-    match.url === "/"
+    location.pathname === '/'
       ? window.location.reload()
-      : history.push('/');
-  }, [match.url]);
+      : dispatch(push('/'));
+    document.documentElement.scrollTop = 0;
+  }, [dispatch, location.pathname]);
 
   // 검색 관련 기능을 수행하는 함수.
-  const { searchInputRef, searchViewRef, isPostPage, postId, searchData, searchView,
+  const { searchInputRef, searchViewRef, searchData, searchView,
     handleSearchInput, handleSearchAndFocus, handleSearchKeyPress
-  } = HandleSearchFunction(dispatch, match.url, goPage);
+  } = HandleSearchFunction(dispatch, goPage);
 
   // 카테고리 관련 기능을 수행하는 함수.
   const { isDisplayCategory, toggleMenuDisplay } = HandleCategoryFunction();
@@ -152,9 +153,9 @@ const HeaderContainer: React.FC<RouteComponentProps<HeaderContainerProps>> = ({ 
 
   return (
     <Header
-      isDisplayCategory={isDisplayCategory} searchInputRef={searchInputRef} searchViewRef={searchViewRef} isPostPage={isPostPage}
-      postId={postId} logged={logged} searchData={searchData} searchPath={match.params.search}
-      searchView={searchView}
+      isDisplayCategory={isDisplayCategory} searchInputRef={searchInputRef} searchViewRef={searchViewRef}
+      postId={id} logged={logged} searchData={searchData} searchPath={search}
+      searchView={searchView} page={Number(1)}
       goHomepage={goHomepage} goEditorPage={goEditorPage} showRemoveModal={showRemoveModal} handleSearchInput={handleSearchInput}
       handleSearchAndFocus={handleSearchAndFocus} handleSearchKeyPress={handleSearchKeyPress}
       goPage={goPage} toggleMenuDisplay={toggleMenuDisplay} handleLoginClick={handleLoginClick}

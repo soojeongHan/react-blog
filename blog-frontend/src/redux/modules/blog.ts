@@ -2,8 +2,10 @@ import { createActions, handleActions } from "redux-actions";
 import { call, put, takeEvery } from "redux-saga/effects";
 import { PostReqType, PostResType } from 'src/types';
 import BlogService from 'src/service/BlogService';
-import { push, replace } from 'connected-react-router';
+import { push } from 'connected-react-router';
 import { AnyAction } from 'redux';
+import qs from 'query-string';
+import { history } from "../create";
 
 export type BlogStateType = {
   post: PostResType | null;
@@ -15,7 +17,7 @@ export type BlogStateType = {
 
 const initialState: BlogStateType = {
   post: null,
-  posts: null,
+  posts: [],
   lastpage: null,
   loading: false,
   error: null,
@@ -25,11 +27,13 @@ const options = {
   prefix: 'blog/posts'
 }
 
-export const { successPost, successList, pending, fail } = createActions(
+export const { successPost, successList, successMoreList, success, pending, fail } = createActions(
   {
     SUCCESS_POST: (post) => ({ post }),
     SUCCESS_LIST: (posts, lastpage) => ({ posts, lastpage }),
+    SUCCESS_MORE_LIST: (posts, lastpage) => ({ posts, lastpage }),
   },
+  'SUCCESS',
   'PENDING',
   'FAIL',
   options,
@@ -42,19 +46,34 @@ const reducer = handleActions<BlogStateType, any>(
       loading: true,
       error: null,
     }),
+    SUCCESS: (state) => ({
+      ...state,
+      loading: false,
+    }),
     SUCCESS_POST: (state, action) => ({
       ...state,
       post: action.payload.post,
       loading: false,
       error: null,
     }),
-    SUCCESS_LIST: (state, action) => ({
-      ...state,
-      lastpage: action.payload.lastpage,
-      posts: action.payload.posts,
-      loading: false,
-      error: null,
-    }),
+    SUCCESS_LIST: (state, action) => {
+      return {
+        ...state,
+        lastpage: action.payload.lastpage,
+        posts: action.payload.posts,
+        loading: false,
+        error: null,
+      }
+    },
+    SUCCESS_MORE_LIST: (state, action) => {
+      return {
+        ...state,
+        lastpage: action.payload.lastpage,
+        posts: state.posts?.concat(action.payload.posts) || null,
+        loading: false,
+        error: null,
+      }
+    },
     FAIL: (state, action) => ({
       ...state,
       loading: false,
@@ -70,7 +89,7 @@ export default reducer;
 export const { getPost, getList, addPost, updatePost, deletePost } = createActions(
   {
     GET_POST: (postId: number, mode: string) => ({ postId, mode }),
-    GET_LIST: (page: number, tag: string, search: string, category: string) => ({ page, tag, search, category }),
+    GET_LIST: (query: any, page: number) => ({ query, page }),
     ADD_POST: (post: PostReqType) => ({ post }),
     UPDATE_POST: (postId: number, post: PostReqType) => ({ postId, post }),
     DELETE_POST: (postId: number) => ({ postId }),
@@ -88,43 +107,29 @@ export function* sagas() {
 
 interface GetListActionType extends AnyAction {
   payload: {
-    page: number,
-    tag: string,
-    search: string,
-    category: string,
+    query: any,
+    page?: number,
   }
 }
 
 function* getListSaga(action: GetListActionType) {
   try {
     yield put(pending());
-    const { page, tag, search, category } = action.payload;
-    const { data, lastpage } = yield call(BlogService.getList, action.payload);
+    const { query, page = 1 } = action.payload;
+    const queryStringify = qs.stringify(query);
+    const { data, lastpage } = yield call(BlogService.getList, queryStringify, page);
 
     const posts: PostResType[] = Array.from(data).map(v => {
       const value = Object(v);
       const post: PostResType = {
+        ...value,
         postId: value._id,
-        title: value.title,
-        body: value.body,
-        tags: value.tags,
-        publishedDate: value.publishedDate,
-        updatedDate: value.updatedDate,
-        category: value.category,
       }
       return post;
     })
-    yield put(successList(posts, lastpage));
-    const url = tag
-      ? `/tag/${tag}/${page}`
-      : search
-        ? `/search/${search}/${page}`
-        : category
-          ? `/category/${category}/${page}`
-          : page !== 1
-            ? `${page}`
-            : '/';
-    yield put(replace(url));
+    yield put(Number(page) > 1
+      ? successMoreList(posts, lastpage)
+      : successList(posts, lastpage));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
@@ -133,15 +138,14 @@ function* getListSaga(action: GetListActionType) {
 
 interface GetPostActionType extends AnyAction {
   payload: {
-    postId: number,
-    mode: string,
+    postId: string,
   }
 }
 
 function* getPostSaga(action: GetPostActionType) {
   try {
     yield put(pending());
-    const { postId, mode } = action.payload;
+    const { postId } = action.payload;
     const { data } = yield call(BlogService.getPost, postId);
 
     const post: PostResType = {
@@ -154,7 +158,6 @@ function* getPostSaga(action: GetPostActionType) {
       category: data.category,
     }
     yield put(successPost(post));
-    yield put(replace(mode === "editor" ? `/editor?id=${postId}` : `/post/${postId}`));
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
@@ -171,7 +174,9 @@ function* addPostSaga(action: AddPostActionType) {
   try {
     yield put(pending());
     yield call(BlogService.writePost, action.payload.post);
+    yield put(success());
     yield put(push("/"));
+    yield history.go(0);
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
@@ -188,7 +193,9 @@ function* deletePostSaga(action: DeletePostActionType) {
   try {
     yield put(pending());
     yield call(BlogService.deletePost, action.payload.postId);
+    yield put(success());
     yield put(push("/"));
+    yield history.go(0);
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
@@ -206,7 +213,9 @@ function* updatePostSaga(action: UpdatePostActionType) {
   try {
     yield put(pending());
     yield call(BlogService.updatePost, action.payload.postId, action.payload.post);
+    yield put(success());
     yield put(push(`/post/${action.payload.postId}`));
+    yield history.go(0);
   }
   catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

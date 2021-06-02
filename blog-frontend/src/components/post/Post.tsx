@@ -3,6 +3,7 @@ import styles from './Post.scss';
 import classNames from 'classnames/bind';
 import { PostResType } from 'src/types';
 import MDEditor from '@uiw/react-md-editor';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -13,21 +14,22 @@ type postProps = {
   postHeadersRef: React.MutableRefObject<HTMLDivElement | null>,
   postBodyRef: React.MutableRefObject<HTMLDivElement | null>,
   postInfoRef: React.MutableRefObject<HTMLDivElement | null>,
-  clickGoHeaderIndex: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  loading: boolean,
+  clickGoHeaderIndex: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
 }
 
 const post: React.FC<postProps> = ({
-  post, date, dataHeaders, postInfoRef, postHeadersRef, postBodyRef,
+  post, date, dataHeaders, postInfoRef, postHeadersRef, postBodyRef, loading,
   clickGoHeaderIndex
 }) => {
-  if (!post) return <div></div>;
+  if (!post) return null;
   return (
     <React.Fragment>
       <div className={cx('post-info')} ref={postInfoRef}>
         <div className={cx('info')}>
           <h1>{post.title}</h1>
           <div className={cx('tags')}>
-            {post.tags.map((tag, i) => <a href={`/tag/${tag}`} key={i}>#{tag}</a>)}
+            {post.tags.map((tag, i) => <Link to={`/tag/${tag}`} key={i}>#{tag}</Link>)}
           </div>
           <div className={cx('date')}>
             {date}
