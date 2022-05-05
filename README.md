@@ -10,8 +10,6 @@
 
 ## 프로젝트 및 블로그 링크
 
-- [**Blog Link**](https://soojeonghan.com)
-
 - [**Github Link**](https://github.com/soojeongHan/react-blog)
 
 - [**Notion Link**](https://www.notion.so/soojeonghan/Blog-Project-fdb5cacba0e34a319ba447b16e086a4d)
